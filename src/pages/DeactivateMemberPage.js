@@ -7,7 +7,13 @@ import {
   CardContent,
   TextField,
   Button,
-  Grid,
+  Stack,
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  InputAdornment,
   Table,
   TableBody,
   TableCell,
@@ -16,20 +22,15 @@ import {
   TableRow,
   Paper,
   Chip,
-  Stack,
-  Alert,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  InputAdornment,
-  IconButton
 } from '@mui/material';
-import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
-import SearchIcon from '@mui/icons-material/Search';
-import WarningIcon from '@mui/icons-material/Warning';
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
+import {
+  PersonRemove as PersonRemoveIcon,
+  Search as SearchIcon,
+  Warning as WarningIcon,
+  Check as CheckIcon,
+  Close as CloseIcon,
+  CalendarToday as CalendarTodayIcon,
+} from '@mui/icons-material';
 
 const DeactivateMemberPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -39,7 +40,6 @@ const DeactivateMemberPage = () => {
   const [deactivatedMemberName, setDeactivatedMemberName] = useState('');
   const [actionType, setActionType] = useState('');
 
-  // Sample data - in a real app this would come from your backend
   const [members, setMembers] = useState([
     {
       id: '#AET-0248',
@@ -48,7 +48,9 @@ const DeactivateMemberPage = () => {
       fechaIngreso: '15/03/2018',
       prestamosActivos: 1,
       estado: 'Activo',
-      salario: '$1,200.00'
+      salario: '$1,200.00',
+      fechaActivacion: '15/03/2018',
+      fechaDesactivacion: null,
     },
     {
       id: '#AET-0185',
@@ -57,25 +59,9 @@ const DeactivateMemberPage = () => {
       fechaIngreso: '20/06/2019',
       prestamosActivos: 0,
       estado: 'Activo',
-      salario: '$1,350.00'
-    },
-    {
-      id: '#AET-0212',
-      nombre: 'Carlos Mendoza',
-      departamento: 'Sistemas',
-      fechaIngreso: '10/01/2020',
-      prestamosActivos: 0,
-      estado: 'Activo',
-      salario: '$1,500.00'
-    },
-    {
-      id: '#AET-0198',
-      nombre: 'Ana Torres',
-      departamento: 'Recursos Humanos',
-      fechaIngreso: '05/11/2017',
-      prestamosActivos: 1,
-      estado: 'Activo',
-      salario: '$1,100.00'
+      salario: '$1,350.00',
+      fechaActivacion: '20/06/2019',
+      fechaDesactivacion: null,
     },
     {
       id: '#AET-0154',
@@ -84,14 +70,17 @@ const DeactivateMemberPage = () => {
       fechaIngreso: '15/08/2015',
       prestamosActivos: 0,
       estado: 'Inactivo',
-      salario: '$950.00'
-    }
+      salario: '$950.00',
+      fechaActivacion: null,
+      fechaDesactivacion: '10/09/2022',
+    },
   ]);
 
-  const filteredMembers = members.filter(member =>
-    member.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.departamento.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredMembers = members.filter(
+    (m) =>
+      m.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.departamento.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleDeactivateClick = (member) => {
@@ -102,22 +91,25 @@ const DeactivateMemberPage = () => {
 
   const handleConfirmDeactivation = () => {
     const isActivating = selectedMember.estado === 'Inactivo';
-    
-    // Toggle member status between "Activo" and "Inactivo"
-    setMembers(prevMembers =>
-      prevMembers.map(member =>
-        member.id === selectedMember.id
-          ? { ...member, estado: isActivating ? 'Activo' : 'Inactivo' }
-          : member
+    const fechaActual = new Date().toLocaleDateString('es-ES');
+
+    setMembers((prev) =>
+      prev.map((m) =>
+        m.id === selectedMember.id
+          ? {
+              ...m,
+              estado: isActivating ? 'Activo' : 'Inactivo',
+              fechaActivacion: isActivating ? fechaActual : m.fechaActivacion,
+              fechaDesactivacion: !isActivating ? fechaActual : null,
+            }
+          : m
       )
     );
-    
+
     setDeactivatedMemberName(selectedMember.nombre);
     setSuccess(true);
     setConfirmDialogOpen(false);
     setSelectedMember(null);
-    
-    // Hide success message after 3 seconds
     setTimeout(() => setSuccess(false), 3000);
   };
 
@@ -138,17 +130,13 @@ const DeactivateMemberPage = () => {
       {success && (
         <Alert severity="success" sx={{ mb: 3 }}>
           {actionType === 'activar'
-            ? `¡Socio activado exitosamente! El socio ${deactivatedMemberName} ha sido reactivado.`
-            : `¡Socio desactivado exitosamente! El socio ${deactivatedMemberName} ha sido desactivado.`
-          }
+            ? `¡Socio activado exitosamente! ${deactivatedMemberName} ha sido reactivado.`
+            : `¡Socio desactivado exitosamente! ${deactivatedMemberName} ha sido desactivado.`}
         </Alert>
       )}
 
-      <Card sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderRadius: '10px', mb: 3 }}>
-        <CardHeader 
-          title="Buscar Socio" 
-          sx={{ backgroundColor: '#d32f2f', color: 'white' }}
-        />
+      <Card sx={{ mb: 3 }}>
+        <CardHeader title="Buscar Socio" sx={{ backgroundColor: '#d32f2f', color: 'white' }} />
         <CardContent>
           <TextField
             fullWidth
@@ -162,73 +150,66 @@ const DeactivateMemberPage = () => {
                 </InputAdornment>
               ),
             }}
-            sx={{ mb: 2 }}
           />
         </CardContent>
       </Card>
 
-      <Card sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderRadius: '10px' }}>
-        <CardHeader 
-          title="Lista de Socios" 
-          sx={{ backgroundColor: '#d32f2f', color: 'white' }}
-        />
+      <Card>
+        <CardHeader title="Lista de Socios" sx={{ backgroundColor: '#d32f2f', color: 'white' }} />
         <CardContent>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>ID</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Nombre</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Departamento</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Fecha Ingreso</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Salario</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Préstamos Activos</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Estado</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Departamento</TableCell>
+                  <TableCell>Fecha Ingreso</TableCell>
+                  <TableCell>Fecha Activ./Desact.</TableCell>
+                  <TableCell>Salario</TableCell>
+                  <TableCell>Préstamos Activos</TableCell>
+                  <TableCell>Estado</TableCell>
+                  <TableCell>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredMembers.map((member, index) => (
-                  <TableRow key={index} hover>
+                {filteredMembers.map((m) => (
+                  <TableRow key={m.id}>
+                    <TableCell>{m.id}</TableCell>
+                    <TableCell>{m.nombre}</TableCell>
+                    <TableCell>{m.departamento}</TableCell>
+                    <TableCell>{m.fechaIngreso}</TableCell>
                     <TableCell>
-                      <Typography variant="body2" fontWeight="bold">
-                        {member.id}
+                      <Typography variant="body2">
+                        <strong>Activación:</strong> {m.fechaActivacion || '—'}
+                      </Typography>
+                      <Typography variant="body2">
+                        <strong>Desactivación:</strong> {m.fechaDesactivacion || '—'}
                       </Typography>
                     </TableCell>
+                    <TableCell>{m.salario}</TableCell>
                     <TableCell>
-                      <Typography variant="body2" fontWeight="medium">
-                        {member.nombre}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>{member.departamento}</TableCell>
-                    <TableCell>{member.fechaIngreso}</TableCell>
-                    <TableCell>{member.salario}</TableCell>
-                    <TableCell>
-                      <Chip 
-                        label={member.prestamosActivos} 
-                        size="small"
-                        color={member.prestamosActivos > 0 ? 'warning' : 'default'}
+                      <Chip
+                        label={m.prestamosActivos}
+                        color={m.prestamosActivos > 0 ? 'warning' : 'default'}
                         variant="outlined"
                       />
                     </TableCell>
                     <TableCell>
-                      <Chip 
-                        label={member.estado} 
-                        size="small"
-                        color={member.estado === 'Activo' ? 'success' : 'default'}
-                        variant="filled"
+                      <Chip
+                        label={m.estado}
+                        color={m.estado === 'Activo' ? 'success' : 'default'}
                       />
                     </TableCell>
                     <TableCell>
                       <Button
                         variant="outlined"
-                        color={member.estado === 'Inactivo' ? 'success' : 'error'}
+                        color={m.estado === 'Inactivo' ? 'success' : 'error'}
                         size="small"
-                        startIcon={<PersonRemoveIcon />}
-                        onClick={() => handleDeactivateClick(member)}
-                        disabled={member.prestamosActivos > 0}
+                        onClick={() => handleDeactivateClick(m)}
+                        disabled={m.prestamosActivos > 0}
                       >
-                        {member.estado === 'Inactivo' ? 'Activar' : 'Desactivar'}
+                        {m.estado === 'Inactivo' ? 'Activar' : 'Desactivar'}
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -236,84 +217,72 @@ const DeactivateMemberPage = () => {
               </TableBody>
             </Table>
           </TableContainer>
-
-          {filteredMembers.length === 0 && (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography variant="h6" color="textSecondary">
-                No se encontraron socios
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {searchTerm ? 'Intenta con otros términos de búsqueda' : 'No hay socios que mostrar'}
-              </Typography>
-            </Box>
-          )}
         </CardContent>
       </Card>
 
-      {/* Dialog de confirmación */}
-      <Dialog open={confirmDialogOpen} onClose={handleCancelDeactivation} maxWidth="sm" fullWidth>
+      <Dialog open={confirmDialogOpen} onClose={handleCancelDeactivation} maxWidth="xs" fullWidth>
         <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <WarningIcon color="warning" />
-          {selectedMember?.estado === 'Inactivo' ? 'Confirmar Activación de Socio' : 'Confirmar Desactivación de Socio'}
+          {selectedMember?.estado === 'Inactivo'
+            ? 'Confirmar Activación de Socio'
+            : 'Confirmar Desactivación de Socio'}
         </DialogTitle>
+
         <DialogContent>
-          <Typography variant="body1" gutterBottom>
-            {selectedMember?.estado === 'Inactivo' 
-              ? '¿Está seguro de que desea activar al siguiente socio?'
-              : '¿Está seguro de que desea desactivar al siguiente socio?'
-            }
+          <Typography sx={{ mb: 2 }}>
+            ¿Está seguro de que desea {actionType} al siguiente socio?
           </Typography>
+
           {selectedMember && (
-            <Box sx={{ mt: 2, p: 2, backgroundColor: '#f5f5f5', borderRadius: 1 }}>
-              <Typography variant="h6" gutterBottom>
+            <Box
+              sx={{
+                backgroundColor: '#f5f5f5',
+                p: 2,
+                borderRadius: 2,
+                mb: 2,
+              }}
+            >
+              <Typography variant="subtitle1" fontWeight="bold">
                 {selectedMember.nombre}
               </Typography>
-              <Grid container spacing={1}>
-                <Grid item xs={6}>
-                  <Typography variant="body2" color="textSecondary">ID:</Typography>
-                  <Typography variant="body2">{selectedMember.id}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2" color="textSecondary">Departamento:</Typography>
-                  <Typography variant="body2">{selectedMember.departamento}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2" color="textSecondary">Fecha Ingreso:</Typography>
-                  <Typography variant="body2">{selectedMember.fechaIngreso}</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography variant="body2" color="textSecondary">Préstamos Activos:</Typography>
-                  <Typography variant="body2">{selectedMember.prestamosActivos}</Typography>
-                </Grid>
-              </Grid>
+              <Typography variant="body2">
+                <strong>ID:</strong> {selectedMember.id}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Departamento:</strong> {selectedMember.departamento}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Fecha Ingreso:</strong> {selectedMember.fechaIngreso}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Préstamos Activos:</strong> {selectedMember.prestamosActivos}
+              </Typography>
             </Box>
           )}
-          <Alert severity={selectedMember?.estado === 'Inactivo' ? 'info' : 'warning'} sx={{ mt: 2 }}>
-            <Typography variant="body2">
-              {selectedMember?.estado === 'Inactivo' ? (
-                <>
-                  <strong>Información:</strong> Esta acción reactivará el socio y podrá volver a acceder a todos los servicios.
-                </>
-              ) : (
-                <>
-                  <strong>Importante:</strong> Esta acción desactivará el socio pero NO eliminará sus datos. 
-                  El socio podrá ser reactivado en el futuro si es necesario.
-                </>
-              )}
-            </Typography>
+
+          <Alert
+            severity="warning"
+            sx={{ backgroundColor: '#fff8e1', borderRadius: 2, fontSize: '0.9rem' }}
+          >
+            <strong>Importante:</strong> Esta acción {actionType === 'activar' ? 'activará' : 'desactivará'} el socio
+            pero <strong>NO eliminará sus datos</strong>. El socio podrá ser
+            {actionType === 'activar' ? ' desactivado ' : ' reactivado '} en el futuro si es necesario.
           </Alert>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleCancelDeactivation} startIcon={<CloseIcon />}>
             Cancelar
           </Button>
-          <Button 
-            onClick={handleConfirmDeactivation} 
-            color={selectedMember?.estado === 'Inactivo' ? 'success' : 'error'}
+          <Button
+            onClick={handleConfirmDeactivation}
             variant="contained"
+            color={selectedMember?.estado === 'Inactivo' ? 'success' : 'error'}
             startIcon={<CheckIcon />}
           >
-            {selectedMember?.estado === 'Inactivo' ? 'Confirmar Activación' : 'Confirmar Desactivación'}
+            {selectedMember?.estado === 'Inactivo'
+              ? 'Confirmar Activación'
+              : 'Confirmar Desactivación'}
           </Button>
         </DialogActions>
       </Dialog>

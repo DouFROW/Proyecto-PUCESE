@@ -43,7 +43,7 @@ const AddMemberPage = () => {
     'Administración',
     'Contabilidad',
     'Sistemas',
-    'Recursos Humanos',
+    'Talento Humano',
     'Mantenimiento',
     'Seguridad',
     'Otro'
@@ -51,6 +51,11 @@ const AddMemberPage = () => {
   const tipodecuenta = [
     'Cuenta Corriente',
     'Cuenta Ahorro',
+  ];
+  const rol = [
+    'Socio',
+    'Administración',
+    'User Normal',
   ];
 
 
@@ -236,6 +241,28 @@ const AddMemberPage = () => {
                 {errors.departamento && (
                   <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.75 }}>
                     {errors.departamento}
+                  </Typography>
+                )}
+              </Grid>
+
+               <Grid item xs={12} md={6}>
+                <FormControl fullWidth required error={!!errors.departamento}>
+                  <InputLabel>Rol</InputLabel>
+                  <Select
+                    value={formData.rol}
+                    onChange={handleInputChange('rol')}
+                    label="rol"
+                  >
+                    {rol.map((ro) => (
+                      <MenuItem key={ro} value={ro}>
+                        {ro}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                {errors.departamento && (
+                  <Typography variant="caption" color="error" sx={{ mt: 0.5, ml: 1.75 }}>
+                    {errors.rol}
                   </Typography>
                 )}
               </Grid>
