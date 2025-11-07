@@ -11,12 +11,13 @@ app.use(bodyParser.json());
 // Conexión con MySQL
 const db = mysql.createConnection({
   host: "localhost",
-  user: "root",          // <-- Cambia según tu usuario de MySQL
-  password: "",          // <-- Agrega tu contraseña si tienes una
-  database: "aetpuce_db" // <-- Base de datos creada en Workbench
+  port: 3307,
+  user: "user", // <-- Cambia según tu usuario de MySQL
+  password: "userpassword", // <-- Agrega tu contraseña si tienes una
+  database: "aetpuce_db", // <-- Base de datos creada en Workbench
 });
 
-db.connect(err => {
+db.connect((err) => {
   if (err) {
     console.error("Error conectando a MySQL:", err);
   } else {
@@ -26,8 +27,18 @@ db.connect(err => {
 
 app.post("/socios", (req, res) => {
   const {
-    codigo_socio, nombre, apellido, cedula, direccion, departamento,
-    fecha_ingreso, nombre_banco, numero_cuenta, salario, email, telefono
+    codigo_socio,
+    nombre,
+    apellido,
+    cedula,
+    direccion,
+    departamento,
+    fecha_ingreso,
+    nombre_banco,
+    numero_cuenta,
+    salario,
+    email,
+    telefono,
   } = req.body;
 
   const sql = `
@@ -37,17 +48,31 @@ app.post("/socios", (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(sql, [
-    codigo_socio, nombre, apellido, cedula, direccion, departamento,
-    fecha_ingreso, nombre_banco, numero_cuenta, salario, email, telefono
-  ], (err, result) => {
-    if (err) {
-      console.error(err);
-      res.status(500).send("Error al guardar socio");
-    } else {
-      res.status(201).send("Socio agregado exitosamente");
+  db.query(
+    sql,
+    [
+      codigo_socio,
+      nombre,
+      apellido,
+      cedula,
+      direccion,
+      departamento,
+      fecha_ingreso,
+      nombre_banco,
+      numero_cuenta,
+      salario,
+      email,
+      telefono,
+    ],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Error al guardar socio");
+      } else {
+        res.status(201).send("Socio agregado exitosamente");
+      }
     }
-  });
+  );
 });
 
 app.get("/socios/activos", (req, res) => {
@@ -64,17 +89,16 @@ app.get("/socios/activos", (req, res) => {
 app.put("/socios/desactivar/:id", (req, res) => {
   const { id } = req.params;
   const sql = "UPDATE socios SET estado = 'Inactivo' WHERE id_socio = ?";
-  db.query(sql, [id], err => {
+  db.query(sql, [id], (err) => {
     if (err) res.status(500).send("Error al desactivar socio");
     else res.send("Socio desactivado");
   });
 });
 
-
 app.put("/socios/activar/:id", (req, res) => {
   const { id } = req.params;
   const sql = "UPDATE socios SET estado = 'Activo' WHERE id_socio = ?";
-  db.query(sql, [id], err => {
+  db.query(sql, [id], (err) => {
     if (err) res.status(500).send("Error al activar socio");
     else res.send("Socio activado");
   });
