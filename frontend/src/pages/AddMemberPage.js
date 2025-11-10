@@ -20,15 +20,8 @@ import {
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import SaveIcon from "@mui/icons-material/Save";
 import ClearIcon from "@mui/icons-material/Clear";
-import { addMember } from '../api/api.js';
 
-const handleAddMember = async () => {
-  const newMember = { nombre: 'Mateo', cedula: '1234567890' };
-  const response = await addMember(newMember);
-   console.log(response);
-};
-
-  const AddMemberPage = () => {
+const AddMemberPage = () => {
   const [formData, setFormData] = useState({
     nombre: "",
     apellido: "",
