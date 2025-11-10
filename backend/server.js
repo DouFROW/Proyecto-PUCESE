@@ -10,11 +10,11 @@ app.use(bodyParser.json());
 
 // Conexión con MySQL (Docker)
 const db = mysql.createConnection({
-  host: "localhost",
-  port: 3307,
-  user: "user",
-  password: "userpassword",
-  database: "my_database",
+  host: process.env.DB_HOST || "localhost",
+  port: process.env.DB_PORT || 3307,
+  user: process.env.DB_USER || "user",
+  password: process.env.DB_PASSWORD || "userpassword",
+  database: process.env.DB_NAME || "my_database",
 });
 
 db.connect((err) => {
