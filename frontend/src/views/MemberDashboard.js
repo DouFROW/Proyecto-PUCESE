@@ -171,7 +171,7 @@ const MemberDashboard = ({ activeNav, setActiveNav }) => {
               title={
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: "bold", color: "#333" }}
+                  sx={{ fontWeight: "bold", color: "#ffffffff" }}
                 >
                   Mis Préstamos
                 </Typography>
@@ -212,7 +212,7 @@ const MemberDashboard = ({ activeNav, setActiveNav }) => {
               title={
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: "bold", color: "#333" }}
+                  sx={{ fontWeight: "bold", color: "#ffffffff" }}
                 >
                   Próximos Pagos
                 </Typography>
@@ -237,7 +237,7 @@ const MemberDashboard = ({ activeNav, setActiveNav }) => {
               title={
                 <Typography
                   variant="h6"
-                  sx={{ fontWeight: "bold", color: "#333" }}
+                  sx={{ fontWeight: "bold", color: "#ffffffff" }}
                 >
                   Documentos Recientes
                 </Typography>

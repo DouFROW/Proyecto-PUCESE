@@ -159,8 +159,8 @@ const ViewCanceledLoansPage = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Stack direction="row" alignItems="center" spacing={2} mb={3}>
-        <CancelIcon sx={{ fontSize: 32, color: '#d32f2f' }} />
-        <Typography variant="h4" fontWeight="bold" color="#d32f2f">
+        <CancelIcon sx={{ fontSize: 32, color: '#0056b3' }} />
+        <Typography variant="h4" fontWeight="bold" color="#0056b3">
           Ver Préstamos Cancelados
         </Typography>
       </Stack>
@@ -168,7 +168,7 @@ const ViewCanceledLoansPage = () => {
       <Card sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderRadius: '10px', mb: 3 }}>
         <CardHeader 
           title="Filtros y Búsqueda" 
-          sx={{ backgroundColor: '#d32f2f', color: 'white' }}
+          sx={{ backgroundColor: '#0056b3', color: 'white' }}
         />
         <CardContent>
           <Grid container spacing={2} alignItems="center">
@@ -210,7 +210,7 @@ const ViewCanceledLoansPage = () => {
                   variant="outlined"
                   startIcon={<PrintIcon />}
                   onClick={handlePrintReport}
-                  sx={{ color: '#d32f2f', borderColor: '#d32f2f' }}
+                  sx={{ color: '#0056b3', borderColor: '#0056b3' }}
                 >
                   Imprimir
                 </Button>
@@ -218,7 +218,7 @@ const ViewCanceledLoansPage = () => {
                   variant="outlined"
                   startIcon={<PictureAsPdfIcon />}
                   onClick={handleExportPDF}
-                  sx={{ color: '#d32f2f', borderColor: '#d32f2f' }}
+                  sx={{ color: '#0056b3', borderColor: '#0056b3' }}
                 >
                   Exportar PDF
                 </Button>
@@ -231,7 +231,7 @@ const ViewCanceledLoansPage = () => {
       <Card id='activeLoansTable' sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderRadius: '10px' }}>
         <CardHeader 
           title={`Préstamos Cancelados (${filteredLoans.length})`}
-          sx={{ backgroundColor: '#d32f2f', color: 'white' }}
+          sx={{ backgroundColor: '#0056b3', color: 'white' }}
         />
         <CardContent>
           <TableContainer component={Paper}>
