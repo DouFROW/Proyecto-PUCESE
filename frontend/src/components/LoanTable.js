@@ -6,21 +6,11 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Button,
 } from "@mui/material";
 import { Chip } from "@mui/material";
 
 const LoanTable = ({ rows, onActionClick }) => {
-  const getChipColor = (status) => {
-    const colors = {
-      Aprobado: "success",
-      Pendiente: "warning",
-      Rechazado: "error",
-    };
-    return colors[status] || "default";
-  };
-
   const getButtonStyle = (action) => {
     if (action === "Revisar") {
       return { color: "#0056b3", border: "1px solid #0056b3" };

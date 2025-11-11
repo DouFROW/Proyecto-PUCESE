@@ -18,7 +18,6 @@ import {
   BarChart,
   Groups,
   AdminPanelSettings,
-  PersonAdd,
   Assessment,
   Person,
   Settings,
