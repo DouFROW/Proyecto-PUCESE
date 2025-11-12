@@ -7,14 +7,11 @@ const bodyParser = require("body-parser");
 const sociosRoutes = require("./router/sociosRoutes");
 const prestamoRoutes = require("./router/prestamoRoutes");
 
-// Inicializar Express
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// Rutas
+// Rutas principales
 app.use("/socios", sociosRoutes);
 app.use("/prestamos", prestamoRoutes);
 
@@ -25,15 +22,13 @@ app.get("/", (req, res) => {
     version: "1.0.0",
     endpoints: {
       socios: "GET /socios - Obtener todos los socios",
-      sociosActivos: "GET /socios/activos - Obtener socios activos",
-      agregarSocio: "POST /socios - Agregar un nuevo socio",
-      desactivarSocio: "PUT /socios/desactivar/:id - Desactivar un socio",
-      activarSocio: "PUT /socios/activar/:id - Activar un socio",
+      prestamos: "GET /prestamos - Obtener todos los préstamos",
+      agregarPrestamo: "POST /prestamos - Crear un nuevo préstamo",
     },
   });
 });
 
-// Manejo de errores 404
+// 404
 app.use("*", (req, res) => {
   res.status(404).json({ error: "Ruta no encontrada" });
 });

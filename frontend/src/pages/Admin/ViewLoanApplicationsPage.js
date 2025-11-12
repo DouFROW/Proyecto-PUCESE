@@ -5,9 +5,6 @@ import {
   Card,
   CardHeader,
   CardContent,
-  TextField,
-  Button,
-  Grid,
   Table,
   TableBody,
   TableCell,
@@ -17,171 +14,63 @@ import {
   Paper,
   Chip,
   Stack,
-  InputAdornment,
   IconButton,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
+  Button,
   Alert,
 } from "@mui/material";
 import AssignmentIcon from "@mui/icons-material/Assignment";
-import SearchIcon from "@mui/icons-material/Search";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-import PrintIcon from "@mui/icons-material/Print";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 
 const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [loanApplications, setLoanApplications] = useState([]);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [applicationDetailsOpen, setApplicationDetailsOpen] = useState(false);
-  const [filterStatus, setFilterStatus] = useState("");
   const [success, setSuccess] = useState({
     show: false,
     message: "",
     type: "",
   });
+  const [error, setError] = useState("");
 
-  const initialApplications = [
-    {
-      id: "SOL-2023-001",
-      socio: "Carlos Mendoza",
-      socioId: "#AET-0212",
-      monto: "$2,500.00",
-      plazo: "12 meses",
-      fechaSolicitud: "12/08/2023",
-      estado: "Pendiente",
-      motivo: "Emergencia médica",
-      ingresos: "$1,500.00",
-      gastos: "$1,200.00",
-      capacidadPago: "$300.00",
-      documentos: ["Cédula", "Comprobante de ingresos", "Certificado laboral"],
-      observaciones: "Socio con buen historial crediticio",
-    },
-    {
-      id: "SOL-2023-002",
-      socio: "Roberto Pazmiño",
-      socioId: "#AET-0225",
-      monto: "$3,500.00",
-      plazo: "24 meses",
-      fechaSolicitud: "10/08/2023",
-      estado: "Pendiente",
-      motivo: "Compra de electrodomésticos",
-      ingresos: "$1,800.00",
-      gastos: "$1,400.00",
-      capacidadPago: "$400.00",
-      documentos: ["Cédula", "Comprobante de ingresos"],
-      observaciones: "Primera solicitud de préstamo",
-    },
-    {
-      id: "SOL-2023-003",
-      socio: "Patricia López",
-      socioId: "#AET-0195",
-      monto: "$1,800.00",
-      plazo: "18 meses",
-      fechaSolicitud: "08/08/2023",
-      estado: "En Revisión",
-      motivo: "Reparación de vehículo",
-      ingresos: "$1,200.00",
-      gastos: "$900.00",
-      capacidadPago: "$300.00",
-      documentos: [
-        "Cédula",
-        "Comprobante de ingresos",
-        "Certificado laboral",
-        "Presupuesto de reparación",
-      ],
-      observaciones: "Documentación completa",
-    },
-    {
-      id: "SOL-2023-004",
-      socio: "Miguel Torres",
-      socioId: "#AET-0201",
-      monto: "$4,000.00",
-      plazo: "24 meses",
-      fechaSolicitud: "05/08/2023",
-      estado: "Aprobado",
-      motivo: "Mejoras en vivienda",
-      ingresos: "$2,000.00",
-      gastos: "$1,500.00",
-      capacidadPago: "$500.00",
-      documentos: [
-        "Cédula",
-        "Comprobante de ingresos",
-        "Certificado laboral",
-        "Presupuesto de mejoras",
-      ],
-      observaciones: "Socio con excelente historial",
-    },
-    {
-      id: "SOL-2023-005",
-      socio: "María González",
-      socioId: "#AET-0198",
-      monto: "$3,000.00",
-      plazo: "15 meses",
-      fechaSolicitud: "15/08/2023",
-      estado: "Aprobado",
-      motivo: "Gastos educativos",
-      ingresos: "$1,600.00",
-      gastos: "$1,100.00",
-      capacidadPago: "$500.00",
-      documentos: ["Cédula", "Comprobante de ingresos", "Certificado laboral"],
-      observaciones: "Excelente historial de pagos",
-    },
-    {
-      id: "SOL-2023-006",
-      socio: "Ana Torres",
-      socioId: "#AET-0187",
-      monto: "$4,200.00",
-      plazo: "20 meses",
-      fechaSolicitud: "10/08/2023",
-      estado: "Aprobado",
-      motivo: "Renovación de negocio",
-      ingresos: "$2,200.00",
-      gastos: "$1,600.00",
-      capacidadPago: "$600.00",
-      documentos: [
-        "Cédula",
-        "Comprobante de ingresos",
-        "Certificado laboral",
-        "Plan de negocio",
-      ],
-      observaciones: "Socio con negocio establecido",
-    },
-  ];
-
-  const [loanApplications, setLoanApplications] = useState(initialApplications);
-
-  const statusOptions = ["Pendiente", "En Revisión", "Aprobado", "Rechazado"];
-
+  // 🟢 Cargar solicitudes de préstamo desde el backend
   useEffect(() => {
-    if (autoOpenSocio) {
-      const application = loanApplications.find(
-        (app) => app.socio === autoOpenSocio
-      );
-      if (application) {
-        setSelectedApplication(application);
-        setApplicationDetailsOpen(true);
+    const fetchLoans = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/prestamos");
+        if (!response.ok) throw new Error("Error al obtener préstamos");
+        const data = await response.json();
+
+        // Formatear para el frontend
+        const formatted = data.map((p) => ({
+          id: p.codigo_solicitud,
+          socio: `${p.socio.nombre} ${p.socio.apellido}`,
+          socioId: p.socio.codigo_socio,
+          monto: `$${parseFloat(p.monto).toLocaleString("es-ES", {
+            minimumFractionDigits: 2,
+          })}`,
+          plazo: `${p.plazo} meses`,
+          fechaSolicitud: new Date(p.fecha_solicitud).toLocaleDateString(
+            "es-ES"
+          ),
+          estado: p.estado,
+          motivo: p.motivo,
+        }));
+
+        setLoanApplications(formatted);
+      } catch (err) {
+        console.error("❌ Error cargando préstamos:", err);
+        setError("Error al cargar las solicitudes de préstamo");
       }
-    }
-  }, [autoOpenSocio, loanApplications]);
+    };
 
-  const filteredApplications = loanApplications.filter((application) => {
-    const matchesSearch =
-      application.socio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      application.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      application.socioId.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus = !filterStatus || application.estado === filterStatus;
-
-    return matchesSearch && matchesStatus;
-  });
+    fetchLoans();
+  }, []);
 
   const handleViewDetails = (application) => {
     setSelectedApplication(application);
@@ -194,15 +83,13 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
   };
 
   const handleApprove = (applicationId) => {
-    setLoanApplications((prevApplications) =>
-      prevApplications.map((app) =>
+    setLoanApplications((prev) =>
+      prev.map((app) =>
         app.id === applicationId ? { ...app, estado: "Aprobado" } : app
       )
     );
-
-    if (selectedApplication && selectedApplication.id === applicationId) {
+    if (selectedApplication?.id === applicationId)
       setSelectedApplication({ ...selectedApplication, estado: "Aprobado" });
-    }
 
     setSuccess({
       show: true,
@@ -213,15 +100,13 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
   };
 
   const handleReject = (applicationId) => {
-    setLoanApplications((prevApplications) =>
-      prevApplications.map((app) =>
+    setLoanApplications((prev) =>
+      prev.map((app) =>
         app.id === applicationId ? { ...app, estado: "Rechazado" } : app
       )
     );
-
-    if (selectedApplication && selectedApplication.id === applicationId) {
+    if (selectedApplication?.id === applicationId)
       setSelectedApplication({ ...selectedApplication, estado: "Rechazado" });
-    }
 
     setSuccess({
       show: true,
@@ -229,14 +114,6 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
       type: "error",
     });
     setTimeout(() => setSuccess({ show: false, message: "", type: "" }), 3000);
-  };
-
-  const handlePrintReport = () => {
-    window.print();
-  };
-
-  const handleExportPDF = () => {
-    console.log("Exportando PDF...");
   };
 
   const getStatusColor = (status) => {
@@ -263,19 +140,22 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
         </Typography>
       </Stack>
 
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
       {success.show && (
         <Alert severity={success.type} sx={{ mb: 3 }}>
           {success.message}
         </Alert>
       )}
 
-      {/* === Tabla de Solicitudes === */}
       <Card
-        id="activeLoansTable"
         sx={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)", borderRadius: "10px" }}
       >
         <CardHeader
-          title={`Solicitudes de Préstamos (${filteredApplications.length})`}
+          title={`Solicitudes de Préstamos (${loanApplications.length})`}
           sx={{ backgroundColor: "#0056b3", color: "white" }}
         />
         <CardContent>
@@ -300,7 +180,7 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredApplications.map((application, index) => (
+                {loanApplications.map((application, index) => (
                   <TableRow key={index} hover>
                     <TableCell>
                       <Typography variant="body2" fontWeight="bold">
@@ -387,54 +267,36 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
         </DialogTitle>
         <DialogContent>
           {selectedApplication && (
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Typography variant="h5" gutterBottom fontWeight="bold">
-                  {selectedApplication.id}
-                </Typography>
-                <Typography variant="h6" color="primary" gutterBottom>
-                  Socio: {selectedApplication.socio} (
-                  {selectedApplication.socioId})
-                </Typography>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom sx={{ color: "#0056b3" }}>
-                  Información del Préstamo
-                </Typography>
-                <Stack spacing={1}>
-                  <Typography variant="body2">
-                    <strong>Monto Solicitado:</strong>{" "}
-                    {selectedApplication.monto}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Plazo:</strong> {selectedApplication.plazo}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Fecha de Solicitud:</strong>{" "}
-                    {selectedApplication.fechaSolicitud}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Motivo:</strong> {selectedApplication.motivo}
-                  </Typography>
-                  <Typography variant="body2" sx={{ display: "flex", alignItems: "center" }}>
-                    <strong>Estado:</strong>
-                    <Chip
-                      label={selectedApplication.estado}
-                      color={getStatusColor(selectedApplication.estado)}
-                      size="small"
-                      sx={{
-                        ml: 1,
-                        width: 110,
-                        borderRadius: 1,
-                        justifyContent: "center",
-                        fontSize: "0.85rem",
-                      }}
-                    />
-                  </Typography>
-                </Stack>
-              </Grid>
-            </Grid>
+            <Stack spacing={1}>
+              <Typography variant="h5" gutterBottom fontWeight="bold">
+                {selectedApplication.id}
+              </Typography>
+              <Typography variant="h6" color="primary" gutterBottom>
+                Socio: {selectedApplication.socio} (
+                {selectedApplication.socioId})
+              </Typography>
+              <Typography>
+                <strong>Monto:</strong> {selectedApplication.monto}
+              </Typography>
+              <Typography>
+                <strong>Plazo:</strong> {selectedApplication.plazo}
+              </Typography>
+              <Typography>
+                <strong>Fecha de Solicitud:</strong>{" "}
+                {selectedApplication.fechaSolicitud}
+              </Typography>
+              <Typography>
+                <strong>Motivo:</strong> {selectedApplication.motivo}
+              </Typography>
+              <Typography>
+                <strong>Estado:</strong>{" "}
+                <Chip
+                  label={selectedApplication.estado}
+                  color={getStatusColor(selectedApplication.estado)}
+                  size="small"
+                />
+              </Typography>
+            </Stack>
           )}
         </DialogContent>
         <DialogActions>

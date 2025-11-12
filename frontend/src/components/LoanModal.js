@@ -36,7 +36,6 @@ const LoanModal = ({ open, onClose }) => {
     purpose: "",
     termsAccepted: false,
   });
-  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -46,56 +45,15 @@ const LoanModal = ({ open, onClose }) => {
     }));
   };
 
-  // 🟩 Función para enviar la solicitud real al backend
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (!formData.amount || !formData.purpose) {
-      alert("Por favor, completa todos los campos.");
-      return;
-    }
-
-    if (!formData.termsAccepted) {
-      alert("Debes aceptar los términos y condiciones.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      // ⚙️ ID del socio (puedes cambiarlo luego por el real desde login)
-      const socio_id = 2;
-
-      const response = await fetch("http://localhost:3000/prestamos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          socio_id,
-          monto: parseFloat(formData.amount),
-          plazo: parseInt(formData.term),
-          motivo: formData.purpose,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        console.error("❌ Error:", data);
-        alert(`Error al registrar la solicitud: ${data.details || data.error}`);
-      } else {
-        alert("✅ Solicitud registrada correctamente");
-        onClose();
-      }
-    } catch (error) {
-      console.error("❌ Error de red:", error);
-      alert("No se pudo conectar con el servidor.");
-    } finally {
-      setLoading(false);
-    }
+    // Simulate submission
+    alert("Solicitud enviada!");
+    onClose();
   };
 
-  const estimatedMonthly = 350.5; // Solo ejemplo visual
-  const totalPay = 5850.0;
+  const estimatedMonthly = 350.5; // Static for demo
+  const totalPay = 5850.0; // Static for demo
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -113,10 +71,14 @@ const LoanModal = ({ open, onClose }) => {
             <Close />
           </Button>
         </Box>
-
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3} sx={{ mb: 3 }}>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <TextField
                 fullWidth
                 label="Monto Solicitado"
@@ -130,8 +92,12 @@ const LoanModal = ({ open, onClose }) => {
                 }}
               />
             </Grid>
-
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <FormControl fullWidth>
                 <InputLabel>Plazo de Pago</InputLabel>
                 <Select
@@ -149,7 +115,6 @@ const LoanModal = ({ open, onClose }) => {
               </FormControl>
             </Grid>
           </Grid>
-
           <TextField
             fullWidth
             multiline
@@ -160,9 +125,13 @@ const LoanModal = ({ open, onClose }) => {
             onChange={handleChange}
             sx={{ mb: 3 }}
           />
-
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <Card sx={{ p: 2 }}>
                 <Typography variant="h6" gutterBottom>
                   Resumen de Pago
@@ -178,8 +147,12 @@ const LoanModal = ({ open, onClose }) => {
                 </Typography>
               </Card>
             </Grid>
-
-            <Grid item xs={12} md={6}>
+            <Grid
+              size={{
+                xs: 12,
+                md: 6,
+              }}
+            >
               <FormControlLabel
                 control={
                   <Checkbox
@@ -190,15 +163,14 @@ const LoanModal = ({ open, onClose }) => {
                 }
                 label="Acepto los términos y condiciones"
               />
-
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
-                disabled={!formData.termsAccepted || loading}
+                disabled={!formData.termsAccepted}
               >
-                {loading ? "Enviando..." : "Enviar Solicitud"}
+                Enviar Solicitud
               </Button>
             </Grid>
           </Grid>

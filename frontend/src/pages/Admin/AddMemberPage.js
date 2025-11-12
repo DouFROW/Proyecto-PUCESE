@@ -98,8 +98,7 @@ const AddMemberPage = () => {
       newErrors.numerodecuenta = "El número de cuenta es requerido";
     if (!formData.tipodecuenta)
       newErrors.tipodecuenta = "El tipo de cuenta es requerido";
-    if (!formData.direccion)
-      newErrors.direccion = "La dirección es requerida";
+    if (!formData.direccion) newErrors.direccion = "La dirección es requerida";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -186,7 +185,9 @@ const AddMemberPage = () => {
         </Alert>
       )}
 
-      <Card sx={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)", borderRadius: "10px" }}>
+      <Card
+        sx={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)", borderRadius: "10px" }}
+      >
         <CardHeader
           title="Información Personal"
           sx={{ backgroundColor: "#0056b3", color: "white" }}
@@ -194,9 +195,12 @@ const AddMemberPage = () => {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-             
               <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom sx={{ color: "#0056b3", fontWeight: "bold" }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ color: "#0056b3", fontWeight: "bold" }}
+                >
                   Información Básica
                 </Typography>
                 <Divider />
@@ -259,7 +263,11 @@ const AddMemberPage = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom sx={{ color: "#0056b3", fontWeight: "bold", mt: 2 }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ color: "#0056b3", fontWeight: "bold", mt: 2 }}
+                >
                   Información de Contacto
                 </Typography>
                 <Divider />
@@ -299,14 +307,22 @@ const AddMemberPage = () => {
               <Grid item xs={12}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={6}>
-                    <Typography variant="h6" gutterBottom sx={{ color: "#0056b3", fontWeight: "bold", mt: 2 }}>
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{ color: "#0056b3", fontWeight: "bold", mt: 2 }}
+                    >
                       Información Laboral
                     </Typography>
                     <Divider />
                     <Box sx={{ mt: 2 }}>
                       <Grid container spacing={2}>
                         <Grid item xs={12} md={6}>
-                          <FormControl fullWidth required error={!!errors.departamento}>
+                          <FormControl
+                            fullWidth
+                            required
+                            error={!!errors.departamento}
+                          >
                             <InputLabel>Departamento</InputLabel>
                             <Select
                               value={formData.departamento}
@@ -361,7 +377,11 @@ const AddMemberPage = () => {
 
                   {/* Bancaria */}
                   <Grid item xs={12} md={6}>
-                    <Typography variant="h6" gutterBottom sx={{ color: "#0056b3", fontWeight: "bold", mt: 2 }}>
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{ color: "#0056b3", fontWeight: "bold", mt: 2 }}
+                    >
                       Información Bancaria
                     </Typography>
                     <Divider />
@@ -394,7 +414,11 @@ const AddMemberPage = () => {
                         </Grid>
 
                         <Grid item xs={12} md={6}>
-                          <FormControl fullWidth required error={!!errors.tipodecuenta}>
+                          <FormControl
+                            fullWidth
+                            required
+                            error={!!errors.tipodecuenta}
+                          >
                             <InputLabel>Tipo de cuenta</InputLabel>
                             <Select
                               value={formData.tipodecuenta}
