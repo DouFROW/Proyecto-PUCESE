@@ -151,7 +151,7 @@ const sociosController = {
   // Desactivar socio
   desactivar: async (req, res) => {
     const { id } = req.params;
-    console.log(`📡 PUT /socios/desactivar/${id}`);
+    console.log(` PUT /sociossacti/devar/${id}`);
 
     try {
       const result = await SocioModel.desactivar(id);

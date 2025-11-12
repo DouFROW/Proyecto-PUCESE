@@ -1,57 +1,122 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-  Modal, Box, Typography, Button, TextField, Select, MenuItem, FormControl, InputLabel,
-  InputAdornment, Checkbox, FormControlLabel, Card, Grid
-} from '@mui/material';
-import { Close } from '@mui/icons-material';
+  Modal,
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  InputAdornment,
+  Checkbox,
+  FormControlLabel,
+  Card,
+  Grid,
+} from "@mui/material";
+import { Close } from "@mui/icons-material";
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: { xs: '90%', sm: 600 },
-  bgcolor: 'background.paper',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: { xs: "90%", sm: 600 },
+  bgcolor: "background.paper",
   borderRadius: 2,
   boxShadow: 24,
   p: 4,
 };
 
 const LoanModal = ({ open, onClose }) => {
-  const [formData, setFormData] = useState({ amount: '', term: 24, purpose: '', termsAccepted: false });
+  const [formData, setFormData] = useState({
+    amount: "",
+    term: 24,
+    purpose: "",
+    termsAccepted: false,
+  });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  // 🟩 Función para enviar la solicitud real al backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate submission
-    alert('Solicitud enviada!');
-    onClose();
+
+    if (!formData.amount || !formData.purpose) {
+      alert("Por favor, completa todos los campos.");
+      return;
+    }
+
+    if (!formData.termsAccepted) {
+      alert("Debes aceptar los términos y condiciones.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // ⚙️ ID del socio (puedes cambiarlo luego por el real desde login)
+      const socio_id = 2;
+
+      const response = await fetch("http://localhost:3000/prestamos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          socio_id,
+          monto: parseFloat(formData.amount),
+          plazo: parseInt(formData.term),
+          motivo: formData.purpose,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("❌ Error:", data);
+        alert(`Error al registrar la solicitud: ${data.details || data.error}`);
+      } else {
+        alert("✅ Solicitud registrada correctamente");
+        onClose();
+      }
+    } catch (error) {
+      console.error("❌ Error de red:", error);
+      alert("No se pudo conectar con el servidor.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const estimatedMonthly = 350.50; // Static for demo
-  const totalPay = 5850.00; // Static for demo
+  const estimatedMonthly = 350.5; // Solo ejemplo visual
+  const totalPay = 5850.0;
 
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={style}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
           <Typography variant="h5">Solicitud de Préstamo</Typography>
-          <Button onClick={onClose}><Close /></Button>
+          <Button onClick={onClose}>
+            <Close />
+          </Button>
         </Box>
+
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3} sx={{ mb: 3 }}>
-            <Grid
-              size={{
-                xs: 12,
-                md: 6
-              }}>
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 label="Monto Solicitado"
@@ -59,18 +124,22 @@ const LoanModal = ({ open, onClose }) => {
                 value={formData.amount}
                 onChange={handleChange}
                 InputProps={{
-                  startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  startAdornment: (
+                    <InputAdornment position="start">$</InputAdornment>
+                  ),
                 }}
               />
             </Grid>
-            <Grid
-              size={{
-                xs: 12,
-                md: 6
-              }}>
+
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <InputLabel>Plazo de Pago</InputLabel>
-                <Select name="term" value={formData.term} onChange={handleChange} label="Plazo de Pago">
+                <Select
+                  name="term"
+                  value={formData.term}
+                  onChange={handleChange}
+                  label="Plazo de Pago"
+                >
                   <MenuItem value={6}>6 meses</MenuItem>
                   <MenuItem value={12}>12 meses</MenuItem>
                   <MenuItem value={18}>18 meses</MenuItem>
@@ -80,6 +149,7 @@ const LoanModal = ({ open, onClose }) => {
               </FormControl>
             </Grid>
           </Grid>
+
           <TextField
             fullWidth
             multiline
@@ -90,30 +160,45 @@ const LoanModal = ({ open, onClose }) => {
             onChange={handleChange}
             sx={{ mb: 3 }}
           />
+
           <Grid container spacing={3}>
-            <Grid
-              size={{
-                xs: 12,
-                md: 6
-              }}>
+            <Grid item xs={12} md={6}>
               <Card sx={{ p: 2 }}>
-                <Typography variant="h6" gutterBottom>Resumen de Pago</Typography>
-                <Typography>Cuota Mensual Estimada: <strong>${estimatedMonthly}</strong></Typography>
-                <Typography>Tasa de Interés: <strong>10.5% anual</strong></Typography>
-                <Typography>Monto Total a Pagar: <strong>${totalPay}</strong></Typography>
+                <Typography variant="h6" gutterBottom>
+                  Resumen de Pago
+                </Typography>
+                <Typography>
+                  Cuota Mensual Estimada: <strong>${estimatedMonthly}</strong>
+                </Typography>
+                <Typography>
+                  Tasa de Interés: <strong>10.5% anual</strong>
+                </Typography>
+                <Typography>
+                  Monto Total a Pagar: <strong>${totalPay}</strong>
+                </Typography>
               </Card>
             </Grid>
-            <Grid
-              size={{
-                xs: 12,
-                md: 6
-              }}>
+
+            <Grid item xs={12} md={6}>
               <FormControlLabel
-                control={<Checkbox checked={formData.termsAccepted} onChange={handleChange} name="termsAccepted" />}
+                control={
+                  <Checkbox
+                    checked={formData.termsAccepted}
+                    onChange={handleChange}
+                    name="termsAccepted"
+                  />
+                }
                 label="Acepto los términos y condiciones"
               />
-              <Button type="submit" variant="contained" color="primary" fullWidth disabled={!formData.termsAccepted}>
-                Enviar Solicitud
+
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={!formData.termsAccepted || loading}
+              >
+                {loading ? "Enviando..." : "Enviar Solicitud"}
               </Button>
             </Grid>
           </Grid>

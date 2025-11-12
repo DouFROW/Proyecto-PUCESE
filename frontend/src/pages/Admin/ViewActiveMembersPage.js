@@ -245,7 +245,11 @@ const ViewActiveMembersPage = () => {
                       </Typography>
                     </TableCell>
                     <TableCell>{member.departamento}</TableCell>
-                    <TableCell>{member.fechaIngreso}</TableCell>
+                    <TableCell>
+                      {new Date(member.fecha_ingreso).toLocaleDateString(
+                        "es-EC"
+                      )}
+                    </TableCell>
                     <TableCell>{member.salario}</TableCell>
                     <TableCell>
                       <Chip
@@ -269,11 +273,11 @@ const ViewActiveMembersPage = () => {
                           sx={{
                             backgroundColor: "#2e7d32",
                             color: "white",
-                            width: 100, 
-                            borderRadius: 1, 
+                            width: 100,
+                            borderRadius: 1,
                             justifyContent: "center",
                             fontSize: "0.85rem",
-                            height: 32, 
+                            height: 32,
                           }}
                         />
                       ) : (
@@ -283,11 +287,11 @@ const ViewActiveMembersPage = () => {
                           sx={{
                             color: "#2e7d32",
                             borderColor: "#2e7d32",
-                            width: 100, 
-                            borderRadius: 1, 
+                            width: 100,
+                            borderRadius: 1,
                             justifyContent: "center",
                             fontSize: "0.85rem",
-                            height: 32, 
+                            height: 32,
                           }}
                         />
                       )}
@@ -375,8 +379,7 @@ const ViewActiveMembersPage = () => {
                 </Typography>
                 <Stack spacing={1}>
                   <Typography variant="body2">
-                    <strong>Departamento:</strong>{" "}
-                    {selectedMember.departamento}
+                    <strong>Departamento:</strong> {selectedMember.departamento}
                   </Typography>
                   <Typography variant="body2">
                     <strong>Fecha de Ingreso:</strong>{" "}
@@ -393,12 +396,12 @@ const ViewActiveMembersPage = () => {
                         sx={{
                           ml: 1,
                           backgroundColor: "#2e7d32",
-                          color: "white",   
-                          width: 100, 
-                          borderRadius: 1, 
+                          color: "white",
+                          width: 100,
+                          borderRadius: 1,
                           justifyContent: "center",
                           fontSize: "0.85rem",
-                          height: 32,                     
+                          height: 32,
                         }}
                       />
                     ) : (
@@ -409,11 +412,11 @@ const ViewActiveMembersPage = () => {
                           ml: 1,
                           color: "#2e7d32",
                           borderColor: "#2e7d32",
-                          width: 100, 
-                          borderRadius: 1, 
+                          width: 100,
+                          borderRadius: 1,
                           justifyContent: "center",
                           fontSize: "0.85rem",
-                          height: 32, 
+                          height: 32,
                         }}
                       />
                     )}

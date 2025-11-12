@@ -4,7 +4,8 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 // Importar rutas
-const sociosRoutes = require("./routes/sociosRoutes");
+const sociosRoutes = require("./router/sociosRoutes");
+const prestamoRoutes = require("./router/prestamoRoutes");
 
 // Inicializar Express
 const app = express();
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 
 // Rutas
 app.use("/socios", sociosRoutes);
+app.use("/prestamos", prestamoRoutes);
 
 // Ruta raíz
 app.get("/", (req, res) => {

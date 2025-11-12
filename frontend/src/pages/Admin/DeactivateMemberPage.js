@@ -54,15 +54,30 @@ const DeactivateMemberPage = () => {
       try {
         setLoading(true);
         setError("");
-        const response = await fetch("http://localhost:3000/socios");
 
-        if (!response.ok) {
-          throw new Error("Error al cargar los socios");
-        }
+        // 🟩 1️⃣ Obtener socios
+        const sociosResponse = await fetch("http://localhost:3000/socios");
+        if (!sociosResponse.ok) throw new Error("Error al cargar socios");
+        const sociosData = await sociosResponse.json();
 
-        const data = await response.json();
+        // 🟦 2️⃣ Obtener préstamos
+        const prestamosResponse = await fetch(
+          "http://localhost:3000/prestamos"
+        );
+        if (!prestamosResponse.ok) throw new Error("Error al cargar préstamos");
+        const prestamosData = await prestamosResponse.json();
 
-        const formattedMembers = data.map((socio) => ({
+        // 🟧 3️⃣ Contar préstamos activos por socio
+        const prestamosPorSocio = {};
+        prestamosData.forEach((p) => {
+          if (["Pendiente", "En Revisión", "Aprobado"].includes(p.estado)) {
+            prestamosPorSocio[p.socio_id] =
+              (prestamosPorSocio[p.socio_id] || 0) + 1;
+          }
+        });
+
+        // 🟨 4️⃣ Combinar datos de socios + préstamos
+        const formattedMembers = sociosData.map((socio) => ({
           id: socio.codigo_socio,
           id_socio: socio.id_socio || socio.id,
           nombre: `${socio.nombre} ${socio.apellido}`,
@@ -70,7 +85,7 @@ const DeactivateMemberPage = () => {
           fechaIngreso: new Date(socio.fecha_ingreso).toLocaleDateString(
             "es-ES"
           ),
-          prestamosActivos: socio.prestamos_activos || 0,
+          prestamosActivos: prestamosPorSocio[socio.id_socio || socio.id] || 0,
           estado: socio.estado,
           salario: socio.salario
             ? `$${parseFloat(socio.salario).toLocaleString("es-ES", {
@@ -89,10 +104,8 @@ const DeactivateMemberPage = () => {
 
         setMembers(formattedMembers);
       } catch (err) {
-        console.error("Error al cargar socios:", err);
-        setError(
-          "No se pudieron cargar los socios. Verifica que el servidor esté funcionando."
-        );
+        console.error("❌ Error al cargar socios:", err);
+        setError("No se pudieron cargar los socios o préstamos.");
         showSnackbar("Error al cargar socios", "error");
       } finally {
         setLoading(false);
@@ -188,17 +201,35 @@ const DeactivateMemberPage = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("http://localhost:3000/socios");
-      if (!response.ok) throw new Error("Error al cargar socios");
-      const data = await response.json();
+      // 🟩 1️⃣ Obtener socios
+      const sociosResponse = await fetch("http://localhost:3000/socios");
+      if (!sociosResponse.ok) throw new Error("Error al cargar socios");
+      const sociosData = await sociosResponse.json();
 
-      const formattedMembers = data.map((socio) => ({
+      // 🟦 2️⃣ Obtener préstamos
+      const prestamosResponse = await fetch("http://localhost:3000/prestamos");
+      if (!prestamosResponse.ok) throw new Error("Error al cargar préstamos");
+      const prestamosData = await prestamosResponse.json();
+
+      // 🟧 3️⃣ Contar préstamos activos por socio
+      const prestamosPorSocio = {};
+      prestamosData.forEach((p) => {
+        if (["Pendiente", "En Revisión", "Aprobado"].includes(p.estado)) {
+          prestamosPorSocio[p.socio_id] =
+            (prestamosPorSocio[p.socio_id] || 0) + 1;
+        }
+      });
+
+      // 🟨 4️⃣ Combinar socios + préstamos
+      const formattedMembers = sociosData.map((socio) => ({
         id: socio.codigo_socio,
         id_socio: socio.id_socio || socio.id,
         nombre: `${socio.nombre} ${socio.apellido}`,
         departamento: socio.departamento,
-        fechaIngreso: new Date(socio.fecha_ingreso).toLocaleDateString("es-ES"),
-        prestamosActivos: socio.prestamos_activos || 0,
+        fechaIngreso: socio.fecha_ingreso
+          ? new Date(socio.fecha_ingreso).toLocaleDateString("es-ES")
+          : "",
+        prestamosActivos: prestamosPorSocio[socio.id_socio || socio.id] || 0,
         estado: socio.estado,
         salario: socio.salario
           ? `$${parseFloat(socio.salario).toLocaleString("es-ES", {
@@ -211,11 +242,14 @@ const DeactivateMemberPage = () => {
         fechaDesactivacion: socio.fecha_desactivacion
           ? new Date(socio.fecha_desactivacion).toLocaleDateString("es-ES")
           : null,
+        email: socio.email,
+        telefono: socio.telefono,
       }));
 
       setMembers(formattedMembers);
     } catch (err) {
-      setError("Error al recargar socios");
+      console.error("❌ Error al recargar socios:", err);
+      setError("Error al recargar socios o préstamos.");
     } finally {
       setLoading(false);
     }
@@ -329,11 +363,11 @@ const DeactivateMemberPage = () => {
                     color={member.estado === "Activo" ? "success" : "default"}
                     variant={member.estado === "Activo" ? "filled" : "outlined"}
                     sx={{
-                      width: 100, 
-                      borderRadius: 1, 
+                      width: 100,
+                      borderRadius: 1,
                       justifyContent: "center",
                       fontSize: "0.85rem",
-                      height: 32, 
+                      height: 32,
                     }}
                   />
                 </TableCell>
