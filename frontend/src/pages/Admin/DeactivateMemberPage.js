@@ -49,7 +49,6 @@ const DeactivateMemberPage = () => {
     severity: "success",
   });
 
-  // 🔄 OBTENER SOCIOS DESDE LA API
   useEffect(() => {
     const fetchMembers = async () => {
       try {
@@ -63,7 +62,6 @@ const DeactivateMemberPage = () => {
 
         const data = await response.json();
 
-        // Transformar datos de la API al formato que usa el componente
         const formattedMembers = data.map((socio) => ({
           id: socio.codigo_socio,
           id_socio: socio.id_socio || socio.id,
@@ -104,7 +102,6 @@ const DeactivateMemberPage = () => {
     fetchMembers();
   }, []);
 
-  // 🔄 FUNCIÓN PARA ACTIVAR/DESACTIVAR SOCIO
   const handleConfirmDeactivation = async () => {
     try {
       const isActivating = selectedMember.estado === "Inactivo";
@@ -126,7 +123,6 @@ const DeactivateMemberPage = () => {
         );
       }
 
-      // 🔄 ACTUALIZAR ESTADO LOCAL
       const updatedMembers = members.map((member) =>
         member.id_socio === selectedMember.id_socio
           ? {
@@ -162,7 +158,6 @@ const DeactivateMemberPage = () => {
     }
   };
 
-  // 🎯 FUNCIÓN PARA MOSTRAR NOTIFICACIONES
   const showSnackbar = (message, severity = "success") => {
     setSnackbar({ open: true, message, severity });
   };
@@ -171,7 +166,6 @@ const DeactivateMemberPage = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
-  // 🔍 FILTRAR SOCIOS
   const filteredMembers = members.filter(
     (m) =>
       m.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -190,7 +184,6 @@ const DeactivateMemberPage = () => {
     setSelectedMember(null);
   };
 
-  // 🔄 RECARGAR SOCIOS
   const handleReload = async () => {
     setLoading(true);
     setError("");
@@ -228,7 +221,6 @@ const DeactivateMemberPage = () => {
     }
   };
 
-  // 🎯 RENDERIZADO CONDICIONAL - ESTADO VACÍO
   const renderContent = () => {
     if (loading) {
       return (
@@ -269,7 +261,7 @@ const DeactivateMemberPage = () => {
           <Button
             variant="contained"
             sx={{ backgroundColor: "#0056b3" }}
-            onClick={() => (window.location.href = "/add-member")} // Ajusta la ruta según tu router
+            onClick={() => (window.location.href = "/add-member")}
           >
             Agregar Primer Socio
           </Button>
@@ -336,6 +328,13 @@ const DeactivateMemberPage = () => {
                     label={member.estado}
                     color={member.estado === "Activo" ? "success" : "default"}
                     variant={member.estado === "Activo" ? "filled" : "outlined"}
+                    sx={{
+                      width: 100, 
+                      borderRadius: 1, 
+                      justifyContent: "center",
+                      fontSize: "0.85rem",
+                      height: 32, 
+                    }}
                   />
                 </TableCell>
                 <TableCell>
@@ -452,7 +451,6 @@ const DeactivateMemberPage = () => {
             ? "Confirmar Activación de Socio"
             : "Confirmar Desactivación de Socio"}
         </DialogTitle>
-
         <DialogContent>
           <Typography sx={{ mb: 2 }}>
             ¿Está seguro de que desea {actionType} al siguiente socio?
@@ -512,7 +510,6 @@ const DeactivateMemberPage = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar para notificaciones */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}

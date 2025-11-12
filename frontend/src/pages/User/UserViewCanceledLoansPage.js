@@ -35,7 +35,7 @@ import PrintIcon from "@mui/icons-material/Print";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import CloseIcon from "@mui/icons-material/Close";
 import WarningIcon from "@mui/icons-material/Warning";
-import { exportHtmlToPdf } from "../components/pdfUtils";
+import { exportHtmlToPdf } from "../../components/pdfUtils";
 
 const ViewCanceledLoansPage = () => {
   const [searchTerm, setSearchTerm] = useState("");

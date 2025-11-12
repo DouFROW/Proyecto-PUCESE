@@ -36,7 +36,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import CloseIcon from "@mui/icons-material/Close";
 import PrintIcon from "@mui/icons-material/Print";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import { exportHtmlToPdf } from "../components/pdfUtils";
+import { exportHtmlToPdf } from "../../components/pdfUtils";
 
 const ViewActiveMembersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -48,7 +48,8 @@ const ViewActiveMembersPage = () => {
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  // Sample data - in a real app this would come from your backend
+
+  // Cargar los miembros desde el backend
   useEffect(() => {
     const fetchMembers = async () => {
       try {
@@ -57,9 +58,6 @@ const ViewActiveMembersPage = () => {
         if (!response.ok) throw new Error("Error al cargar socios");
 
         const data = await response.json();
-
-        // Ajusta según la estructura que devuelve tu backend
-        // Suponiendo que devuelve un array de socios
         setMembers(data);
       } catch (err) {
         setError("No se pudieron cargar los socios. Verifica el servidor.");
@@ -105,12 +103,10 @@ const ViewActiveMembersPage = () => {
   };
 
   const handlePrintReport = () => {
-    // Here you would implement print functionality
     window.print();
   };
 
   const handleExportPDF = () => {
-    // Here you would implement PDF export functionality
     console.log("Exporting to PDF...");
     exportHtmlToPdf("activeLoansTable", "Socios Activos.pdf");
   };
@@ -267,12 +263,34 @@ const ViewActiveMembersPage = () => {
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Chip
-                        label={member.estado}
-                        size="small"
-                        color="success"
-                        variant="filled"
-                      />
+                      {member.estado === "Activo" ? (
+                        <Chip
+                          label="Activo"
+                          sx={{
+                            backgroundColor: "#2e7d32",
+                            color: "white",
+                            width: 100, 
+                            borderRadius: 1, 
+                            justifyContent: "center",
+                            fontSize: "0.85rem",
+                            height: 32, 
+                          }}
+                        />
+                      ) : (
+                        <Chip
+                          label="Inactivo"
+                          variant="outlined"
+                          sx={{
+                            color: "#2e7d32",
+                            borderColor: "#2e7d32",
+                            width: 100, 
+                            borderRadius: 1, 
+                            justifyContent: "center",
+                            fontSize: "0.85rem",
+                            height: 32, 
+                          }}
+                        />
+                      )}
                     </TableCell>
                     <TableCell>
                       <IconButton
@@ -357,7 +375,8 @@ const ViewActiveMembersPage = () => {
                 </Typography>
                 <Stack spacing={1}>
                   <Typography variant="body2">
-                    <strong>Departamento:</strong> {selectedMember.departamento}
+                    <strong>Departamento:</strong>{" "}
+                    {selectedMember.departamento}
                   </Typography>
                   <Typography variant="body2">
                     <strong>Fecha de Ingreso:</strong>{" "}
@@ -368,12 +387,36 @@ const ViewActiveMembersPage = () => {
                   </Typography>
                   <Typography variant="body2">
                     <strong>Estado:</strong>
-                    <Chip
-                      label={selectedMember.estado}
-                      size="small"
-                      color="success"
-                      sx={{ ml: 1 }}
-                    />
+                    {selectedMember.estado === "Activo" ? (
+                      <Chip
+                        label="Activo"
+                        sx={{
+                          ml: 1,
+                          backgroundColor: "#2e7d32",
+                          color: "white",   
+                          width: 100, 
+                          borderRadius: 1, 
+                          justifyContent: "center",
+                          fontSize: "0.85rem",
+                          height: 32,                     
+                        }}
+                      />
+                    ) : (
+                      <Chip
+                        label="Inactivo"
+                        variant="outlined"
+                        sx={{
+                          ml: 1,
+                          color: "#2e7d32",
+                          borderColor: "#2e7d32",
+                          width: 100, 
+                          borderRadius: 1, 
+                          justifyContent: "center",
+                          fontSize: "0.85rem",
+                          height: 32, 
+                        }}
+                      />
+                    )}
                   </Typography>
                 </Stack>
               </Grid>

@@ -25,7 +25,7 @@ import {
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import PrintIcon from "@mui/icons-material/Print";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import { exportHtmlToPdf } from "../components/pdfUtils";
+import { exportHtmlToPdf } from "../../components/pdfUtils";
 import {
   BarChart,
   Bar,
@@ -42,7 +42,7 @@ import {
   Line,
 } from "recharts";
 
-const AnnualDiscountReportPage = () => {
+const UserAnnualDiscountReportPage = () => {
   // Sample data for charts
   const monthlyDiscounts = [
     { mes: "Enero", descuentos: 12500, prestamos: 8500, cuotas: 4000 },
@@ -137,7 +137,7 @@ const AnnualDiscountReportPage = () => {
       <Stack direction="row" alignItems="center" spacing={2} mb={3}>
         <AssessmentIcon sx={{ fontSize: 32, color: "#0056b3" }} />
         <Typography variant="h4" fontWeight="bold" color="#0056b3">
-          Reporte Anual de Descuentos
+          MI Reporte Anual de Descuentos
         </Typography>
       </Stack>
 
@@ -292,7 +292,7 @@ const AnnualDiscountReportPage = () => {
         {/* Gráficos Estadísticos */}
         <Grid container spacing={3} mb={3}>
           {/* Gráfico de Descuentos Mensuales */}
-          <Grid item xs={12} md={8} width="53%">
+          <Grid item xs={12} md={8} width="52.8%">
             <Card
               sx={{
                 boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
@@ -640,4 +640,4 @@ const AnnualDiscountReportPage = () => {
   );
 };
 
-export default AnnualDiscountReportPage;
+export default UserAnnualDiscountReportPage;

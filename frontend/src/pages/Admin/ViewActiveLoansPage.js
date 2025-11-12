@@ -34,9 +34,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import PrintIcon from '@mui/icons-material/Print';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CloseIcon from '@mui/icons-material/Close';
-import { exportHtmlToPdf } from '../components/pdfUtils';
-
-
+import { exportHtmlToPdf } from '../../components/pdfUtils';
 
 const ViewActiveLoansPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,7 +42,6 @@ const ViewActiveLoansPage = () => {
   const [loanDetailsOpen, setLoanDetailsOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState('');
 
-  // Sample data - in a real app this would come from your backend
   const activeLoans = [
     {
       id: "P-2023-0015",
@@ -119,12 +116,13 @@ const ViewActiveLoansPage = () => {
   const statusOptions = ['Al día', 'Pendiente', 'Moroso'];
 
   const filteredLoans = activeLoans.filter(loan => {
-    const matchesSearch = loan.socio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         loan.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         loan.socioId.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const matchesSearch =
+      loan.socio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.socioId.toLowerCase().includes(searchTerm.toLowerCase());
+
     const matchesStatus = !filterStatus || loan.estado === filterStatus;
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -138,9 +136,7 @@ const ViewActiveLoansPage = () => {
     setSelectedLoan(null);
   };
 
-  const handlePrintReport = () => {
-    window.print();
-  };
+  const handlePrintReport = () => window.print();
 
   const handleExportPDF = () => {
     console.log('Exporting active loans to PDF...');
@@ -165,9 +161,10 @@ const ViewActiveLoansPage = () => {
         </Typography>
       </Stack>
 
+      {/* Filtros */}
       <Card sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderRadius: '10px', mb: 3 }}>
-        <CardHeader 
-          title="Filtros y Búsqueda" 
+        <CardHeader
+          title="Filtros y Búsqueda"
           sx={{ backgroundColor: '#0056b3', color: 'white' }}
         />
         <CardContent>
@@ -228,8 +225,9 @@ const ViewActiveLoansPage = () => {
         </CardContent>
       </Card>
 
+      {/* Tabla */}
       <Card id="activeLoansTable" sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderRadius: '10px' }}>
-        <CardHeader 
+        <CardHeader
           title={`Préstamos Activos (${filteredLoans.length})`}
           sx={{ backgroundColor: '#0056b3', color: 'white' }}
         />
@@ -238,92 +236,67 @@ const ViewActiveLoansPage = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>ID Préstamo</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Socio</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Monto</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Tasa</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Plazo</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Cuota</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Saldo</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Estado</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Próximo Pago</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
+                  {['ID Préstamo', 'Socio', 'Monto', 'Tasa', 'Plazo', 'Cuota', 'Saldo', 'Estado', 'Próximo Pago', 'Acciones']
+                    .map((header) => (
+                      <TableCell key={header} sx={{ fontWeight: 'bold' }}>{header}</TableCell>
+                    ))}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {filteredLoans.map((loan, index) => (
                   <TableRow key={index} hover>
                     <TableCell>
-                      <Typography variant="body2" fontWeight="bold">
-                        {loan.id}
-                      </Typography>
+                      <Typography variant="body2" fontWeight="bold">{loan.id}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body2" fontWeight="medium">
-                        {loan.socio}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {loan.socioId}
-                      </Typography>
+                      <Typography variant="body2" fontWeight="medium">{loan.socio}</Typography>
+                      <Typography variant="caption" color="textSecondary">{loan.socioId}</Typography>
                     </TableCell>
                     <TableCell>{loan.monto}</TableCell>
                     <TableCell>{loan.tasa}</TableCell>
                     <TableCell>{loan.plazo}</TableCell>
                     <TableCell>{loan.cuota}</TableCell>
                     <TableCell>
-                      <Typography variant="body2" fontWeight="medium">
-                        {loan.saldo}
-                      </Typography>
+                      <Typography variant="body2" fontWeight="medium">{loan.saldo}</Typography>
                     </TableCell>
                     <TableCell>
                       <Chip
                         label={loan.estado}
                         color={getStatusColor(loan.estado)}
                         size="small"
+                        sx={{
+                          width: 120,
+                          height: 32,
+                          borderRadius: "6px",
+                          letterSpacing: "0.3px",
+                          justifyContent: "center",
+                          fontSize: "0.8rem",
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                        }}
                       />
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body2">
-                        {loan.proximoPago}
-                      </Typography>
-                      <Typography variant="caption" color="textSecondary">
-                        {loan.montoProximoPago}
-                      </Typography>
+                      <Typography variant="body2">{loan.proximoPago}</Typography>
+                      <Typography variant="caption" color="textSecondary">{loan.montoProximoPago}</Typography>
                     </TableCell>
                     <TableCell>
-                      <Stack direction="row" spacing={1}>
-                        <IconButton
-                          color="primary"
-                          onClick={() => handleViewDetails(loan)}
-                          title="Ver detalles"
-                        >
-                          <VisibilityIcon />
-                        </IconButton>
-                       
-                      </Stack>
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleViewDetails(loan)}
+                        title="Ver detalles"
+                      >
+                        <VisibilityIcon />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-
-          {filteredLoans.length === 0 && (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
-              <Typography variant="h6" color="textSecondary">
-                No se encontraron préstamos activos
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {searchTerm || filterStatus 
-                  ? 'Intenta con otros filtros de búsqueda' 
-                  : 'No hay préstamos activos que mostrar'}
-              </Typography>
-            </Box>
-          )}
         </CardContent>
       </Card>
 
-      {/* Dialog de detalles del préstamo */}
+      {/* Detalles */}
       <Dialog open={loanDetailsOpen} onClose={handleCloseDetails} maxWidth="md" fullWidth>
         <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <AssignmentIcon color="primary" />
@@ -333,9 +306,7 @@ const ViewActiveLoansPage = () => {
           {selectedLoan && (
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Typography variant="h5" gutterBottom>
-                  {selectedLoan.id}
-                </Typography>
+                <Typography variant="h5" gutterBottom>{selectedLoan.id}</Typography>
                 <Typography variant="h6" color="primary" gutterBottom>
                   Socio: {selectedLoan.socio} ({selectedLoan.socioId})
                 </Typography>
@@ -346,21 +317,17 @@ const ViewActiveLoansPage = () => {
                   Información del Préstamo
                 </Typography>
                 <Stack spacing={1}>
-                  <Typography variant="body2">
-                    <strong>Monto:</strong> {selectedLoan.monto}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Tasa de Interés:</strong> {selectedLoan.tasa}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Plazo:</strong> {selectedLoan.plazo}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Cuota Mensual:</strong> {selectedLoan.cuota}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Saldo Pendiente:</strong> {selectedLoan.saldo}
-                  </Typography>
+                  {[
+                    ['Monto', selectedLoan.monto],
+                    ['Tasa de Interés', selectedLoan.tasa],
+                    ['Plazo', selectedLoan.plazo],
+                    ['Cuota Mensual', selectedLoan.cuota],
+                    ['Saldo Pendiente', selectedLoan.saldo],
+                  ].map(([label, value]) => (
+                    <Typography key={label} variant="body2">
+                      <Box component="span" fontWeight="bold">{label}:</Box> {value}
+                    </Typography>
+                  ))}
                 </Stack>
               </Grid>
 
@@ -369,21 +336,17 @@ const ViewActiveLoansPage = () => {
                   Cronograma
                 </Typography>
                 <Stack spacing={1}>
-                  <Typography variant="body2">
-                    <strong>Fecha de Inicio:</strong> {selectedLoan.fechaInicio}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Fecha de Vencimiento:</strong> {selectedLoan.fechaVencimiento}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Cuotas Pagadas:</strong> {selectedLoan.cuotasPagadas}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Cuotas Restantes:</strong> {selectedLoan.cuotasRestantes}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Próximo Pago:</strong> {selectedLoan.proximoPago}
-                  </Typography>
+                  {[
+                    ['Fecha de Inicio', selectedLoan.fechaInicio],
+                    ['Fecha de Vencimiento', selectedLoan.fechaVencimiento],
+                    ['Cuotas Pagadas', selectedLoan.cuotasPagadas],
+                    ['Cuotas Restantes', selectedLoan.cuotasRestantes],
+                    ['Próximo Pago', selectedLoan.proximoPago],
+                  ].map(([label, value]) => (
+                    <Typography key={label} variant="body2">
+                      <Box component="span" fontWeight="bold">{label}:</Box> {value}
+                    </Typography>
+                  ))}
                 </Stack>
               </Grid>
 
@@ -396,6 +359,14 @@ const ViewActiveLoansPage = () => {
                     label={selectedLoan.estado}
                     color={getStatusColor(selectedLoan.estado)}
                     size="medium"
+                    sx={{
+                      width: 120,
+                      height: 32,
+                      borderRadius: "6px",
+                      justifyContent: "center",
+                      fontSize: "0.8rem",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                    }}
                   />
                   <Typography variant="body2">
                     Próximo pago: {selectedLoan.montoProximoPago}

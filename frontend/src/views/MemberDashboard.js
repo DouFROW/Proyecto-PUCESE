@@ -49,7 +49,6 @@ const MemberDashboard = ({ activeNav, setActiveNav }) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const stats = [
-    { icon: GroupsIcon, title: "Datos Personales" },
     {
       icon: AttachMoneyIcon,
       title: "Préstamos Activos",

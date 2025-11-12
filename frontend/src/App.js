@@ -11,33 +11,33 @@ import AdminDashboard from "./views/AdminDashboard";
 import MemberDashboard from "./views/MemberDashboard";
 
 // Páginas internas
-import DocumentsPage from "./pages/DocumentsPage";
-import LoansPage from "./pages/LoansPage";
-import ReportsPage from "./pages/ReportsPage";
-import ContabPage from "./pages/ContabPage";
-import GroupPage from "./pages/GroupPage";
-import AdminsPage from "./pages/AdminsPage";
+import DocumentsPage from "./pages/Admin/DocumentsPage";
+import LoansPage from "./pages/Admin/LoansPage";
+import ReportsPage from "./pages/Admin/ReportsPage";
+import ContabPage from "./pages/Admin/ContabPage";
+import GroupPage from "./pages/Admin/GroupPage";
+import AdminsPage from "./pages/Admin/AdminsPage";
 
 // Nuevas páginas de gestión de socios
-import AddMemberPage from "./pages/AddMemberPage";
-import DeactivateMemberPage from "./pages/DeactivateMemberPage";
-import ViewActiveMembersPage from "./pages/ViewActiveMembersPage";
+import AddMemberPage from "./pages/Admin/AddMemberPage";
+import DeactivateMemberPage from "./pages/Admin/DeactivateMemberPage";
+import ViewActiveMembersPage from "./pages/Admin/ViewActiveMembersPage";
 
 // Nuevas páginas de gestión de préstamos
-import ViewActiveLoansPage from "./pages/ViewActiveLoansPage";
-import ViewLoanApplicationsPage from "./pages/ViewLoanApplicationsPage";
-import ViewCanceledLoansPage from "./pages/ViewCanceledLoansPage";
-import LoansByMemberPage from "./pages/LoansByMemberPage";
+import ViewActiveLoansPage from "./pages/Admin/ViewActiveLoansPage";
+import ViewLoanApplicationsPage from "./pages/Admin/ViewLoanApplicationsPage";
+import ViewCanceledLoansPage from "./pages/Admin/ViewCanceledLoansPage";
+import LoansByMemberPage from "./pages/Admin/LoansByMemberPage";
 
 // Nuevas páginas de gestión de descuentos
-import AnnualDiscountReportPage from "./pages/AnnualDiscountReportPage";
-import MonthlyDiscountReportPage from "./pages/MonthlyDiscountReportPage";
+import AnnualDiscountReportPage from "./pages/Admin/AnnualDiscountReportPage";
+import MonthlyDiscountReportPage from "./pages/Admin/MonthlyDiscountReportPage";
 
 //USER
-import UserMonthlyDiscountReportPage from "./pages/UserMonthlyDiscountReportPage";
-import UserViewActiveLoansPage from "./pages/UserViewActiveLoansPage";
-import UserViewCanceledLoansPage from "./pages/UserViewCanceledLoansPage";
-import UserAnnualDiscountReportPage from "./pages/UserAnnualDiscountReportPage";
+import UserMonthlyDiscountReportPage from "./pages/User/UserMonthlyDiscountReportPage";
+import UserViewActiveLoansPage from "./pages/User/UserViewActiveLoansPage";
+import UserViewCanceledLoansPage from "./pages/User/UserViewCanceledLoansPage";
+import UserAnnualDiscountReportPage from "./pages/User/UserAnnualDiscountReportPage";
 function App() {
   // Estado para controlar tipo de usuario y vista activa
   const [currentView, setCurrentView] = useState("admin"); // 'admin' o 'member'

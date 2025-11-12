@@ -199,11 +199,11 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
         app.id === applicationId ? { ...app, estado: "Aprobado" } : app
       )
     );
-    
+
     if (selectedApplication && selectedApplication.id === applicationId) {
       setSelectedApplication({ ...selectedApplication, estado: "Aprobado" });
     }
-    
+
     setSuccess({
       show: true,
       message: "Solicitud aprobada exitosamente",
@@ -218,15 +218,15 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
         app.id === applicationId ? { ...app, estado: "Rechazado" } : app
       )
     );
-    
+
     if (selectedApplication && selectedApplication.id === applicationId) {
       setSelectedApplication({ ...selectedApplication, estado: "Rechazado" });
     }
-    
-    setSuccess({ 
-      show: true, 
-      message: "Solicitud rechazada", 
-      type: "error" 
+
+    setSuccess({
+      show: true,
+      message: "Solicitud rechazada",
+      type: "error",
     });
     setTimeout(() => setSuccess({ show: false, message: "", type: "" }), 3000);
   };
@@ -269,75 +269,7 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
         </Alert>
       )}
 
-      <Card
-        sx={{
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-          borderRadius: "10px",
-          mb: 3,
-        }}
-      >
-        <CardHeader
-          title="Filtros y Búsqueda"
-          sx={{ backgroundColor: "#0056b3", color: "white" }}
-        />
-        <CardContent>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} md={4}>
-              <TextField
-                fullWidth
-                placeholder="Buscar por socio, ID de solicitud..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon color="action" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <FormControl fullWidth>
-                <InputLabel>Estado</InputLabel>
-                <Select
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                  label="Estado"
-                >
-                  <MenuItem value="">Todos</MenuItem>
-                  {statusOptions.map((status) => (
-                    <MenuItem key={status} value={status}>
-                      {status}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} md={5}>
-              <Stack direction="row" spacing={1} justifyContent="flex-end">
-                <Button
-                  variant="outlined"
-                  startIcon={<PrintIcon />}
-                  onClick={handlePrintReport}
-                  sx={{ color: "#0056b3", borderColor: "#0056b3" }}
-                >
-                  Imprimir
-                </Button>
-                <Button
-                  variant="outlined"
-                  startIcon={<PictureAsPdfIcon />}
-                  onClick={handleExportPDF}
-                  sx={{ color: "#0056b3", borderColor: "#0056b3" }}
-                >
-                  Exportar PDF
-                </Button>
-              </Stack>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
-
+      {/* === Tabla de Solicitudes === */}
       <Card
         id="activeLoansTable"
         sx={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)", borderRadius: "10px" }}
@@ -351,18 +283,20 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: "bold" }}>
-                    ID Solicitud
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Socio</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Monto</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Plazo</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>
-                    Fecha Solicitud
-                  </TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Motivo</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Estado</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Acciones</TableCell>
+                  {[
+                    "ID Solicitud",
+                    "Socio",
+                    "Monto",
+                    "Plazo",
+                    "Fecha Solicitud",
+                    "Motivo",
+                    "Estado",
+                    "Acciones",
+                  ].map((header) => (
+                    <TableCell key={header} sx={{ fontWeight: "bold" }}>
+                      {header}
+                    </TableCell>
+                  ))}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -394,6 +328,12 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
                         label={application.estado}
                         color={getStatusColor(application.estado)}
                         size="small"
+                        sx={{
+                          width: 110,
+                          borderRadius: 1,
+                          justifyContent: "center",
+                          fontSize: "0.85rem",
+                        }}
                       />
                     </TableCell>
                     <TableCell>
@@ -405,8 +345,8 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
                         >
                           <VisibilityIcon />
                         </IconButton>
-                        {application.estado === "Pendiente" ||
-                        application.estado === "En Revisión" ? (
+                        {(application.estado === "Pendiente" ||
+                          application.estado === "En Revisión") && (
                           <>
                             <IconButton
                               color="success"
@@ -423,7 +363,7 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
                               <CloseIcon />
                             </IconButton>
                           </>
-                        ) : null}
+                        )}
                       </Stack>
                     </TableCell>
                   </TableRow>
@@ -431,22 +371,10 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
               </TableBody>
             </Table>
           </TableContainer>
-
-          {filteredApplications.length === 0 && (
-            <Box sx={{ textAlign: "center", py: 4 }}>
-              <Typography variant="h6" color="textSecondary">
-                No se encontraron solicitudes
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {searchTerm || filterStatus
-                  ? "Intenta con otros filtros de búsqueda"
-                  : "No hay solicitudes que mostrar"}
-              </Typography>
-            </Box>
-          )}
         </CardContent>
       </Card>
 
+      {/* === Diálogo Detalles === */}
       <Dialog
         open={applicationDetailsOpen}
         onClose={handleCloseDetails}
@@ -461,7 +389,7 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
           {selectedApplication && (
             <Grid container spacing={3}>
               <Grid item xs={12}>
-                <Typography variant="h5" gutterBottom>
+                <Typography variant="h5" gutterBottom fontWeight="bold">
                   {selectedApplication.id}
                 </Typography>
                 <Typography variant="h6" color="primary" gutterBottom>
@@ -489,61 +417,22 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
                   <Typography variant="body2">
                     <strong>Motivo:</strong> {selectedApplication.motivo}
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ display: "flex", alignItems: "center" }}>
                     <strong>Estado:</strong>
                     <Chip
                       label={selectedApplication.estado}
                       color={getStatusColor(selectedApplication.estado)}
                       size="small"
-                      sx={{ ml: 1 }}
+                      sx={{
+                        ml: 1,
+                        width: 110,
+                        borderRadius: 1,
+                        justifyContent: "center",
+                        fontSize: "0.85rem",
+                      }}
                     />
                   </Typography>
                 </Stack>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom sx={{ color: "#0056b3" }}>
-                  Capacidad de Pago
-                </Typography>
-                <Stack spacing={1}>
-                  <Typography variant="body2">
-                    <strong>Ingresos Mensuales:</strong>{" "}
-                    {selectedApplication.ingresos}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Gastos Mensuales:</strong>{" "}
-                    {selectedApplication.gastos}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Capacidad de Pago:</strong>{" "}
-                    {selectedApplication.capacidadPago}
-                  </Typography>
-                </Stack>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom sx={{ color: "#0056b3" }}>
-                  Documentos Presentados
-                </Typography>
-                <Stack direction="row" spacing={1} flexWrap="wrap">
-                  {selectedApplication.documentos.map((doc, index) => (
-                    <Chip
-                      key={index}
-                      label={doc}
-                      size="small"
-                      variant="outlined"
-                    />
-                  ))}
-                </Stack>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom sx={{ color: "#0056b3" }}>
-                  Observaciones
-                </Typography>
-                <Typography variant="body2">
-                  {selectedApplication.observaciones}
-                </Typography>
               </Grid>
             </Grid>
           )}

@@ -59,9 +59,8 @@ const AddMemberPage = () => {
   const handleInputChange = (field) => (event) => {
     const value = event.target.value;
 
-    // Validación para campos numéricos
     if (["cedula", "telefono", "numerodecuenta"].includes(field)) {
-      if (!/^\d*$/.test(value)) return; // Solo permite números
+      if (!/^\d*$/.test(value)) return;
     }
 
     setFormData({
@@ -195,7 +194,7 @@ const AddMemberPage = () => {
         <CardContent>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              {/* Información Básica */}
+             
               <Grid item xs={12}>
                 <Typography variant="h6" gutterBottom sx={{ color: "#0056b3", fontWeight: "bold" }}>
                   Información Básica
@@ -259,7 +258,6 @@ const AddMemberPage = () => {
                 </Box>
               </Grid>
 
-              {/* Información de Contacto */}
               <Grid item xs={12}>
                 <Typography variant="h6" gutterBottom sx={{ color: "#0056b3", fontWeight: "bold", mt: 2 }}>
                   Información de Contacto
@@ -298,10 +296,8 @@ const AddMemberPage = () => {
                 </Box>
               </Grid>
 
-              {/* Información Laboral y Bancaria */}
               <Grid item xs={12}>
                 <Grid container spacing={2}>
-                  {/* Laboral */}
                   <Grid item xs={12} md={6}>
                     <Typography variant="h6" gutterBottom sx={{ color: "#0056b3", fontWeight: "bold", mt: 2 }}>
                       Información Laboral
@@ -419,7 +415,6 @@ const AddMemberPage = () => {
                   </Grid>
                 </Grid>
 
-                {/* 🔽 Botones debajo de las secciones laboral y bancaria */}
                 <Stack
                   direction="row"
                   spacing={2}

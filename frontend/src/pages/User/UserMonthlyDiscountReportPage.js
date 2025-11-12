@@ -32,9 +32,9 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import SearchIcon from "@mui/icons-material/Search";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import WarningIcon from "@mui/icons-material/Warning";
-import { exportHtmlToPdf } from "../components/pdfUtils";
+import { exportHtmlToPdf } from "../../components/pdfUtils";
 
-const MonthlyDiscountReportPage = () => {
+const UserMonthlyDiscountReportPage = () => {
   const getCurrentMonth = () => {
     const currentDate = new Date();
     const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
@@ -234,7 +234,7 @@ const MonthlyDiscountReportPage = () => {
       <Stack direction="row" alignItems="center" spacing={2} mb={3}>
         <ReceiptIcon sx={{ fontSize: 32, color: "#0056b3" }} />
         <Typography variant="h4" fontWeight="bold" color="#0056b3">
-          Reporte Mensual de Descuentos
+          MI Reporte Mensual de Descuentos
         </Typography>
       </Stack>
 
@@ -709,4 +709,4 @@ const MonthlyDiscountReportPage = () => {
   );
 };
 
-export default MonthlyDiscountReportPage;
+export default UserMonthlyDiscountReportPage;

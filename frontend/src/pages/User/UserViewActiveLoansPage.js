@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -26,22 +26,22 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
-} from '@mui/material';
-import CancelIcon from '@mui/icons-material/Cancel';
-import SearchIcon from '@mui/icons-material/Search';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import PrintIcon from '@mui/icons-material/Print';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import CloseIcon from '@mui/icons-material/Close';
-import WarningIcon from '@mui/icons-material/Warning';
-import { exportHtmlToPdf } from '../components/pdfUtils';
+  MenuItem,
+} from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
+import SearchIcon from "@mui/icons-material/Search";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import PrintIcon from "@mui/icons-material/Print";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import CloseIcon from "@mui/icons-material/Close";
+import WarningIcon from "@mui/icons-material/Warning";
+import { exportHtmlToPdf } from "../../components/pdfUtils";
 
 const ViewCanceledLoansPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [loanDetailsOpen, setLoanDetailsOpen] = useState(false);
-  const [filterReason, setFilterReason] = useState('');
+  const [filterReason, setFilterReason] = useState("");
 
   // Sample data - in a real app this would come from your backend
   const canceledLoans = [
@@ -60,7 +60,7 @@ const ViewCanceledLoansPage = () => {
       cuotasRestantes: 7,
       montoCancelado: "$1,428.75",
       saldoCancelado: "$571.25",
-      estado: "Cancelado"
+      estado: "Cancelado",
     },
     {
       id: "P-2023-0008",
@@ -77,7 +77,7 @@ const ViewCanceledLoansPage = () => {
       cuotasRestantes: 14,
       montoCancelado: "$1,682.00",
       saldoCancelado: "$1,818.00",
-      estado: "Cancelado"
+      estado: "Cancelado",
     },
     {
       id: "P-2023-0012",
@@ -94,7 +94,7 @@ const ViewCanceledLoansPage = () => {
       cuotasRestantes: 7,
       montoCancelado: "$1,285.75",
       saldoCancelado: "$514.25",
-      estado: "Cancelado"
+      estado: "Cancelado",
     },
     {
       id: "P-2023-0014",
@@ -111,19 +111,26 @@ const ViewCanceledLoansPage = () => {
       cuotasRestantes: 19,
       montoCancelado: "$1,752.50",
       saldoCancelado: "$2,247.50",
-      estado: "Cancelado"
-    }
+      estado: "Cancelado",
+    },
   ];
 
-  const cancelReasons = ['Pago anticipado', 'Incumplimiento de pagos', 'Solicitud del socio', 'Problemas financieros'];
+  const cancelReasons = [
+    "Pago anticipado",
+    "Incumplimiento de pagos",
+    "Solicitud del socio",
+    "Problemas financieros",
+  ];
 
-  const filteredLoans = canceledLoans.filter(loan => {
-    const matchesSearch = loan.socio.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         loan.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         loan.socioId.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesReason = !filterReason || loan.motivoCancelacion === filterReason;
-    
+  const filteredLoans = canceledLoans.filter((loan) => {
+    const matchesSearch =
+      loan.socio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      loan.socioId.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesReason =
+      !filterReason || loan.motivoCancelacion === filterReason;
+
     return matchesSearch && matchesReason;
   });
 
@@ -142,33 +149,44 @@ const ViewCanceledLoansPage = () => {
   };
 
   const handleExportPDF = () => {
-    console.log('Exporting canceled loans to PDF...');
-     exportHtmlToPdf('activeLoansTable', 'Prestamos cancelados.pdf');
+    console.log("Exporting canceled loans to PDF...");
+    exportHtmlToPdf("activeLoansTable", "Prestamos cancelados.pdf");
   };
 
   const getReasonColor = (reason) => {
     switch (reason) {
-      case 'Pago anticipado': return 'success';
-      case 'Incumplimiento de pagos': return 'error';
-      case 'Solicitud del socio': return 'warning';
-      case 'Problemas financieros': return 'info';
-      default: return 'default';
+      case "Pago anticipado":
+        return "success";
+      case "Incumplimiento de pagos":
+        return "error";
+      case "Solicitud del socio":
+        return "warning";
+      case "Problemas financieros":
+        return "info";
+      default:
+        return "default";
     }
   };
 
   return (
     <Box sx={{ p: 3 }}>
       <Stack direction="row" alignItems="center" spacing={2} mb={3}>
-        <CancelIcon sx={{ fontSize: 32, color: '#0056b3' }} />
+        <CancelIcon sx={{ fontSize: 32, color: "#0056b3" }} />
         <Typography variant="h4" fontWeight="bold" color="#0056b3">
-          Ver Préstamos Cancelados
+          Ver MIS Préstamos Cancelados
         </Typography>
       </Stack>
 
-      <Card sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderRadius: '10px', mb: 3 }}>
-        <CardHeader 
-          title="Filtros y Búsqueda" 
-          sx={{ backgroundColor: '#0056b3', color: 'white' }}
+      <Card
+        sx={{
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          borderRadius: "10px",
+          mb: 3,
+        }}
+      >
+        <CardHeader
+          title="Filtros y Búsqueda"
+          sx={{ backgroundColor: "#0056b3", color: "white" }}
         />
         <CardContent>
           <Grid container spacing={2} alignItems="center">
@@ -210,7 +228,7 @@ const ViewCanceledLoansPage = () => {
                   variant="outlined"
                   startIcon={<PrintIcon />}
                   onClick={handlePrintReport}
-                  sx={{ color: '#0056b3', borderColor: '#0056b3' }}
+                  sx={{ color: "#0056b3", borderColor: "#0056b3" }}
                 >
                   Imprimir
                 </Button>
@@ -218,7 +236,7 @@ const ViewCanceledLoansPage = () => {
                   variant="outlined"
                   startIcon={<PictureAsPdfIcon />}
                   onClick={handleExportPDF}
-                  sx={{ color: '#0056b3', borderColor: '#0056b3' }}
+                  sx={{ color: "#0056b3", borderColor: "#0056b3" }}
                 >
                   Exportar PDF
                 </Button>
@@ -228,26 +246,37 @@ const ViewCanceledLoansPage = () => {
         </CardContent>
       </Card>
 
-      <Card id='activeLoansTable' sx={{ boxShadow: '0 4px 6px rgba(0,0,0,0.1)', borderRadius: '10px' }}>
-        <CardHeader 
+      <Card
+        id="activeLoansTable"
+        sx={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)", borderRadius: "10px" }}
+      >
+        <CardHeader
           title={`Préstamos Cancelados (${filteredLoans.length})`}
-          sx={{ backgroundColor: '#0056b3', color: 'white' }}
+          sx={{ backgroundColor: "#0056b3", color: "white" }}
         />
         <CardContent>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>ID Préstamo</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Socio</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Monto</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Cuota</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Fecha Inicio</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Fecha Cancelación</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Motivo</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Cuotas Pagadas</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Saldo Cancelado</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>ID Préstamo</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Socio</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Monto</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Cuota</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    Fecha Inicio
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    Fecha Cancelación
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Motivo</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    Cuotas Pagadas
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    Saldo Cancelado
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Acciones</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -279,11 +308,16 @@ const ViewCanceledLoansPage = () => {
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">
-                        {loan.cuotasPagadas}/{loan.cuotasPagadas + loan.cuotasRestantes}
+                        {loan.cuotasPagadas}/
+                        {loan.cuotasPagadas + loan.cuotasRestantes}
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body2" fontWeight="medium" color="error">
+                      <Typography
+                        variant="body2"
+                        fontWeight="medium"
+                        color="error"
+                      >
                         {loan.saldoCancelado}
                       </Typography>
                     </TableCell>
@@ -303,14 +337,14 @@ const ViewCanceledLoansPage = () => {
           </TableContainer>
 
           {filteredLoans.length === 0 && (
-            <Box sx={{ textAlign: 'center', py: 4 }}>
+            <Box sx={{ textAlign: "center", py: 4 }}>
               <Typography variant="h6" color="textSecondary">
                 No se encontraron préstamos cancelados
               </Typography>
               <Typography variant="body2" color="textSecondary">
-                {searchTerm || filterReason 
-                  ? 'Intenta con otros filtros de búsqueda' 
-                  : 'No hay préstamos cancelados que mostrar'}
+                {searchTerm || filterReason
+                  ? "Intenta con otros filtros de búsqueda"
+                  : "No hay préstamos cancelados que mostrar"}
               </Typography>
             </Box>
           )}
@@ -318,8 +352,13 @@ const ViewCanceledLoansPage = () => {
       </Card>
 
       {/* Dialog de detalles del préstamo cancelado */}
-      <Dialog open={loanDetailsOpen} onClose={handleCloseDetails} maxWidth="md" fullWidth>
-        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Dialog
+        open={loanDetailsOpen}
+        onClose={handleCloseDetails}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <CancelIcon color="error" />
           Detalles del Préstamo Cancelado
         </DialogTitle>
@@ -336,7 +375,7 @@ const ViewCanceledLoansPage = () => {
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom sx={{ color: '#d32f2f' }}>
+                <Typography variant="h6" gutterBottom sx={{ color: "#d32f2f" }}>
                   Información del Préstamo
                 </Typography>
                 <Stack spacing={1}>
@@ -353,9 +392,9 @@ const ViewCanceledLoansPage = () => {
                     <strong>Cuota Mensual:</strong> {selectedLoan.cuota}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Estado:</strong> 
-                    <Chip 
-                      label={selectedLoan.estado} 
+                    <strong>Estado:</strong>
+                    <Chip
+                      label={selectedLoan.estado}
                       color="error"
                       size="small"
                       sx={{ ml: 1 }}
@@ -365,7 +404,7 @@ const ViewCanceledLoansPage = () => {
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom sx={{ color: '#d32f2f' }}>
+                <Typography variant="h6" gutterBottom sx={{ color: "#d32f2f" }}>
                   Cronograma de Cancelación
                 </Typography>
                 <Stack spacing={1}>
@@ -373,18 +412,21 @@ const ViewCanceledLoansPage = () => {
                     <strong>Fecha de Inicio:</strong> {selectedLoan.fechaInicio}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Fecha de Cancelación:</strong> {selectedLoan.fechaCancelacion}
+                    <strong>Fecha de Cancelación:</strong>{" "}
+                    {selectedLoan.fechaCancelacion}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Cuotas Pagadas:</strong> {selectedLoan.cuotasPagadas}
+                    <strong>Cuotas Pagadas:</strong>{" "}
+                    {selectedLoan.cuotasPagadas}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Cuotas Restantes:</strong> {selectedLoan.cuotasRestantes}
+                    <strong>Cuotas Restantes:</strong>{" "}
+                    {selectedLoan.cuotasRestantes}
                   </Typography>
                   <Typography variant="body2">
-                    <strong>Motivo de Cancelación:</strong> 
-                    <Chip 
-                      label={selectedLoan.motivoCancelacion} 
+                    <strong>Motivo de Cancelación:</strong>
+                    <Chip
+                      label={selectedLoan.motivoCancelacion}
                       color={getReasonColor(selectedLoan.motivoCancelacion)}
                       size="small"
                       sx={{ ml: 1 }}
@@ -394,49 +436,67 @@ const ViewCanceledLoansPage = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom sx={{ color: '#d32f2f' }}>
+                <Typography variant="h6" gutterBottom sx={{ color: "#d32f2f" }}>
                   Resumen Financiero
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item xs={12} md={4}>
                     <Typography variant="body2">
-                      <strong>Monto Cancelado:</strong> {selectedLoan.montoCancelado}
+                      <strong>Monto Cancelado:</strong>{" "}
+                      {selectedLoan.montoCancelado}
                     </Typography>
                   </Grid>
                   <Grid item xs={12} md={4}>
                     <Typography variant="body2">
-                      <strong>Saldo Cancelado:</strong> 
-                      <Typography component="span" color="error" fontWeight="bold">
+                      <strong>Saldo Cancelado:</strong>
+                      <Typography
+                        component="span"
+                        color="error"
+                        fontWeight="bold"
+                      >
                         {selectedLoan.saldoCancelado}
                       </Typography>
                     </Typography>
                   </Grid>
                   <Grid item xs={12} md={4}>
                     <Typography variant="body2">
-                      <strong>Porcentaje Pagado:</strong> 
-                      {Math.round((selectedLoan.cuotasPagadas / (selectedLoan.cuotasPagadas + selectedLoan.cuotasRestantes)) * 100)}%
+                      <strong>Porcentaje Pagado:</strong>
+                      {Math.round(
+                        (selectedLoan.cuotasPagadas /
+                          (selectedLoan.cuotasPagadas +
+                            selectedLoan.cuotasRestantes)) *
+                          100
+                      )}
+                      %
                     </Typography>
                   </Grid>
                 </Grid>
               </Grid>
 
-              {selectedLoan.motivoCancelacion === 'Incumplimiento de pagos' && (
+              {selectedLoan.motivoCancelacion === "Incumplimiento de pagos" && (
                 <Grid item xs={12}>
-                  <Box sx={{ 
-                    backgroundColor: '#ffebee', 
-                    border: '1px solid #f44336', 
-                    borderRadius: 1, 
-                    p: 2 
-                  }}>
+                  <Box
+                    sx={{
+                      backgroundColor: "#ffebee",
+                      border: "1px solid #f44336",
+                      borderRadius: 1,
+                      p: 2,
+                    }}
+                  >
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <WarningIcon color="error" />
-                      <Typography variant="body2" color="error" fontWeight="bold">
+                      <Typography
+                        variant="body2"
+                        color="error"
+                        fontWeight="bold"
+                      >
                         Préstamo cancelado por incumplimiento de pagos
                       </Typography>
                     </Stack>
                     <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-                      Este préstamo fue cancelado debido al incumplimiento en los pagos. 
-                      El socio mantiene la obligación de pagar el saldo pendiente.
+                      Este préstamo fue cancelado debido al incumplimiento en
+                      los pagos. El socio mantiene la obligación de pagar el
+                      saldo pendiente.
                     </Typography>
                   </Box>
                 </Grid>

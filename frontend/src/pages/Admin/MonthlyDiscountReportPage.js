@@ -20,94 +20,29 @@ import {
   TableRow,
   Paper,
   Chip,
+  TextField,
+  InputAdornment,
+  Alert,
   Divider,
 } from "@mui/material";
-import AssessmentIcon from "@mui/icons-material/Assessment";
+
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import PrintIcon from "@mui/icons-material/Print";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import { exportHtmlToPdf } from "../components/pdfUtils";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-} from "recharts";
+import SearchIcon from "@mui/icons-material/Search";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import WarningIcon from "@mui/icons-material/Warning";
+import { exportHtmlToPdf } from "../../components/pdfUtils";
 
-const UserAnnualDiscountReportPage = () => {
-  // Sample data for charts
-  const monthlyDiscounts = [
-    { mes: "Enero", descuentos: 12500, prestamos: 8500, cuotas: 4000 },
-    { mes: "Febrero", descuentos: 13200, prestamos: 9200, cuotas: 4000 },
-    { mes: "Marzo", descuentos: 11800, prestamos: 7800, cuotas: 4000 },
-    { mes: "Abril", descuentos: 14100, prestamos: 10100, cuotas: 4000 },
-    { mes: "Mayo", descuentos: 12900, prestamos: 8900, cuotas: 4000 },
-    { mes: "Junio", descuentos: 13500, prestamos: 9500, cuotas: 4000 },
-    { mes: "Julio", descuentos: 12200, prestamos: 8200, cuotas: 4000 },
-    { mes: "Agosto", descuentos: 13800, prestamos: 9800, cuotas: 4000 },
-    { mes: "Septiembre", descuentos: 13100, prestamos: 9100, cuotas: 4000 },
-    { mes: "Octubre", descuentos: 12600, prestamos: 8600, cuotas: 4000 },
-    { mes: "Noviembre", descuentos: 13400, prestamos: 9400, cuotas: 4000 },
-    { mes: "Diciembre", descuentos: 14200, prestamos: 10200, cuotas: 4000 },
-  ];
+const MonthlyDiscountReportPage = () => {
+  const getCurrentMonth = () => {
+    const currentDate = new Date();
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, "0");
+    return month;
+  };
 
-  const departmentDiscounts = [
-    { departamento: "Administración", descuentos: 45000, socios: 15 },
-    { departamento: "Contabilidad", descuentos: 38000, socios: 12 },
-    { departamento: "Sistemas", descuentos: 42000, socios: 18 },
-    { departamento: "Recursos Humanos", descuentos: 32000, socios: 10 },
-    { departamento: "Mantenimiento", descuentos: 28000, socios: 8 },
-    { departamento: "Seguridad", descuentos: 25000, socios: 6 },
-  ];
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth());
 
-  const discountTypes = [
-    { name: "Préstamos", value: 108000, color: "#8884d8" },
-    { name: "Cuotas Mensuales", value: 48000, color: "#82ca9d" },
-    { name: "Otros", value: 12000, color: "#ffc658" },
-  ];
-
-  const topMembers = [
-    {
-      socio: "Juan Pérez",
-      departamento: "Administración",
-      descuentos: 4200,
-      prestamos: 2,
-    },
-    {
-      socio: "María González",
-      departamento: "Contabilidad",
-      descuentos: 3800,
-      prestamos: 1,
-    },
-    {
-      socio: "Carlos Mendoza",
-      departamento: "Sistemas",
-      descuentos: 3600,
-      prestamos: 1,
-    },
-    {
-      socio: "Ana Torres",
-      departamento: "Recursos Humanos",
-      descuentos: 3400,
-      prestamos: 1,
-    },
-    {
-      socio: "Luis Vásquez",
-      departamento: "Mantenimiento",
-      descuentos: 3200,
-      prestamos: 1,
-    },
-  ];
-
-  // Function to get current year and past 5 years
   const getYearsList = () => {
     const currentYear = new Date().getFullYear();
     const yearsList = [];
@@ -121,23 +56,185 @@ const UserAnnualDiscountReportPage = () => {
 
   const years = getYearsList();
   const [selectedYear, setSelectedYear] = useState(years[0]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Sample data for monthly report
+  const monthlyData = [
+    {
+      socio: "Juan Pérez",
+      socioId: "#AET-0248",
+      departamento: "Administración",
+      cuotaFija: "$26.80",
+      descuentoPrestamo: "$350.50",
+      totalDescuento: "$377.30",
+      estado: "Aplicado",
+      fechaAplicacion: "15/09/2023",
+      observaciones: "Descuento aplicado correctamente",
+    },
+    {
+      socio: "María González",
+      socioId: "#AET-0185",
+      departamento: "Contabilidad",
+      cuotaFija: "$26.80",
+      descuentoPrestamo: "$350.50",
+      totalDescuento: "$377.30",
+      estado: "Aplicado",
+      fechaAplicacion: "15/09/2023",
+      observaciones: "Descuento aplicado correctamente",
+    },
+    {
+      socio: "Carlos Mendoza",
+      socioId: "#AET-0212",
+      departamento: "Sistemas",
+      cuotaFija: "$26.80",
+      descuentoPrestamo: "$0.00",
+      totalDescuento: "$26.80",
+      estado: "Aplicado",
+      fechaAplicacion: "15/09/2023",
+      observaciones: "Solo cuota fija",
+    },
+    {
+      socio: "Ana Torres",
+      socioId: "#AET-0198",
+      departamento: "Recursos Humanos",
+      cuotaFija: "$26.80",
+      descuentoPrestamo: "$490.70",
+      totalDescuento: "$517.50",
+      estado: "Aplicado",
+      fechaAplicacion: "15/09/2023",
+      observaciones: "Descuento aplicado correctamente",
+    },
+    {
+      socio: "Luis Vásquez",
+      socioId: "#AET-0154",
+      departamento: "Mantenimiento",
+      cuotaFija: "$26.80",
+      descuentoPrestamo: "$285.75",
+      totalDescuento: "$312.55",
+      estado: "Aplicado",
+      fechaAplicacion: "15/09/2023",
+      observaciones: "Descuento aplicado correctamente",
+    },
+    {
+      socio: "Patricia López",
+      socioId: "#AET-0195",
+      departamento: "Administración",
+      cuotaFija: "$26.80",
+      descuentoPrestamo: "$0.00",
+      totalDescuento: "$26.80",
+      estado: "Pendiente",
+      fechaAplicacion: "Pendiente",
+      observaciones: "Falta documentación",
+    },
+    {
+      socio: "Miguel Torres",
+      socioId: "#AET-0201",
+      departamento: "Sistemas",
+      cuotaFija: "$26.80",
+      descuentoPrestamo: "$420.50",
+      totalDescuento: "$447.30",
+      estado: "Aplicado",
+      fechaAplicacion: "15/09/2023",
+      observaciones: "Descuento aplicado correctamente",
+    },
+    {
+      socio: "Rosa Méndez",
+      socioId: "#AET-0218",
+      departamento: "Contabilidad",
+      cuotaFija: "$26.80",
+      descuentoPrestamo: "$0.00",
+      totalDescuento: "$26.80",
+      estado: "Aplicado",
+      fechaAplicacion: "15/09/2023",
+      observaciones: "Solo cuota fija",
+    },
+  ];
+
+  const months = [
+    { value: "01", label: "Enero" },
+    { value: "02", label: "Febrero" },
+    { value: "03", label: "Marzo" },
+    { value: "04", label: "Abril" },
+    { value: "05", label: "Mayo" },
+    { value: "06", label: "Junio" },
+    { value: "07", label: "Julio" },
+    { value: "08", label: "Agosto" },
+    { value: "09", label: "Septiembre" },
+    { value: "10", label: "Octubre" },
+    { value: "11", label: "Noviembre" },
+    { value: "12", label: "Diciembre" },
+  ];
+
+  // Years array is now generated by the getYearsList function above
+
+  const filteredData = monthlyData.filter(
+    (member) =>
+      member.socio.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.socioId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      member.departamento.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Aplicado":
+        return "success";
+      case "Pendiente":
+        return "warning";
+      case "Error":
+        return "error";
+      default:
+        return "default";
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "Aplicado":
+        return <CheckCircleIcon />;
+      case "Pendiente":
+        return <WarningIcon />;
+      case "Error":
+        return <WarningIcon />;
+      default:
+        return null;
+    }
+  };
+
   const handlePrintReport = () => {
     window.print();
   };
 
   const handleExportPDF = () => {
-    console.log("Exporting annual discount report to PDF...");
-    exportHtmlToPdf("activeLoansTable", "PrestamosActivos.pdf");
+    console.log("Exporting monthly discount report to PDF...");
+    exportHtmlToPdf("activeLoansTable", "Reporte_Mensual.pdf");
   };
 
-  const COLORS = ["#8884d8", "#82ca9d", "#ffc658"];
+  // Calculate totals
+  const totalCuotaFija = filteredData.reduce((sum, member) => {
+    return sum + parseFloat(member.cuotaFija.replace("$", ""));
+  }, 0);
+
+  const totalDescuentoPrestamo = filteredData.reduce((sum, member) => {
+    return sum + parseFloat(member.descuentoPrestamo.replace("$", ""));
+  }, 0);
+
+  const totalDescuento = filteredData.reduce((sum, member) => {
+    return sum + parseFloat(member.totalDescuento.replace("$", ""));
+  }, 0);
+
+  const aplicados = filteredData.filter(
+    (member) => member.estado === "Aplicado"
+  ).length;
+  const pendientes = filteredData.filter(
+    (member) => member.estado === "Pendiente"
+  ).length;
 
   return (
     <Box sx={{ p: 3 }}>
       <Stack direction="row" alignItems="center" spacing={2} mb={3}>
-        <AssessmentIcon sx={{ fontSize: 32, color: "#0056b3" }} />
+        <ReceiptIcon sx={{ fontSize: 32, color: "#0056b3" }} />
         <Typography variant="h4" fontWeight="bold" color="#0056b3">
-          MI Reporte Anual de Descuentos
+          Reporte Mensual de Descuentos
         </Typography>
       </Stack>
 
@@ -154,7 +251,23 @@ const UserAnnualDiscountReportPage = () => {
         />
         <CardContent>
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={2}>
+              <FormControl fullWidth>
+                <InputLabel>Mes</InputLabel>
+                <Select
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  label="Mes"
+                >
+                  {months.map((month) => (
+                    <MenuItem key={month.value} value={month.value}>
+                      {month.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={2}>
               <FormControl fullWidth>
                 <InputLabel>Año</InputLabel>
                 <Select
@@ -170,7 +283,22 @@ const UserAnnualDiscountReportPage = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12} md={4}>
+              <TextField
+                fullWidth
+                placeholder="Buscar socio..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon color="action" />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
               <Stack direction="row" spacing={1} justifyContent="flex-end">
                 <Button
                   variant="outlined"
@@ -195,7 +323,7 @@ const UserAnnualDiscountReportPage = () => {
       </Card>
 
       <div id="activeLoansTable">
-        {/* Resumen Ejecutivo */}
+        {/* Resumen del Mes */}
         <Card
           sx={{
             boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
@@ -204,7 +332,9 @@ const UserAnnualDiscountReportPage = () => {
           }}
         >
           <CardHeader
-            title={`Resumen Ejecutivo - Año ${selectedYear}`}
+            title={`Resumen del Mes - ${
+              months.find((m) => m.value === selectedMonth)?.label
+            } ${selectedYear}`}
             sx={{ backgroundColor: "#0056b3", color: "white" }}
           />
           <CardContent>
@@ -219,10 +349,10 @@ const UserAnnualDiscountReportPage = () => {
                   }}
                 >
                   <Typography variant="h4" color="primary" fontWeight="bold">
-                    $168,000
+                    ${totalCuotaFija.toFixed(2)}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Total Descuentos
+                    Total Cuota Fija
                   </Typography>
                 </Box>
               </Grid>
@@ -240,10 +370,10 @@ const UserAnnualDiscountReportPage = () => {
                     color="success.main"
                     fontWeight="bold"
                   >
-                    69
+                    ${totalDescuentoPrestamo.toFixed(2)}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Socios Activos
+                    Descuentos Préstamos
                   </Typography>
                 </Box>
               </Grid>
@@ -261,10 +391,10 @@ const UserAnnualDiscountReportPage = () => {
                     color="warning.main"
                     fontWeight="bold"
                   >
-                    $2,435
+                    ${totalDescuento.toFixed(2)}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Promedio por Socio
+                    Total Descuentos
                   </Typography>
                 </Box>
               </Grid>
@@ -278,151 +408,48 @@ const UserAnnualDiscountReportPage = () => {
                   }}
                 >
                   <Typography variant="h4" color="info.main" fontWeight="bold">
-                    $26.80
+                    {filteredData.length}
                   </Typography>
                   <Typography variant="body2" color="textSecondary">
-                    Cuota Fija Mensual
+                    Socios Procesados
                   </Typography>
                 </Box>
+              </Grid>
+            </Grid>
+
+            <Divider sx={{ my: 2 }} />
+
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Alert severity="success" icon={<CheckCircleIcon />}>
+                  <Typography variant="body2">
+                    <strong>{aplicados}</strong> descuentos aplicados
+                    correctamente
+                  </Typography>
+                </Alert>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                {pendientes > 0 && (
+                  <Alert severity="warning" icon={<WarningIcon />}>
+                    <Typography variant="body2">
+                      <strong>{pendientes}</strong> descuentos pendientes de
+                      aplicación
+                    </Typography>
+                  </Alert>
+                )}
               </Grid>
             </Grid>
           </CardContent>
         </Card>
 
-        {/* Gráficos Estadísticos */}
-        <Grid container spacing={3} mb={3}>
-          {/* Gráfico de Descuentos Mensuales */}
-          <Grid item xs={12} md={8} width="52.8%">
-            <Card
-              sx={{
-                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                borderRadius: "10px",
-              }}
-            >
-              <CardHeader
-                title="Evolución de Descuentos Mensuales"
-                sx={{ backgroundColor: "#0056b3", color: "white" }}
-              />
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={monthlyDiscounts}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="mes" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar
-                      dataKey="descuentos"
-                      fill="#8884d8"
-                      name="Descuentos Totales"
-                    />
-                    <Bar
-                      dataKey="prestamos"
-                      fill="#82ca9d"
-                      name="Descuentos Préstamos"
-                    />
-                    <Bar
-                      dataKey="cuotas"
-                      fill="#ffc658"
-                      name="Cuotas Mensuales"
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Gráfico de Tipos de Descuentos */}
-          <Grid item xs={12} md={4} width="45%">
-            <Card
-              sx={{
-                boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                borderRadius: "10px",
-              }}
-            >
-              <CardHeader
-                title="Distribución por Tipo"
-                sx={{ backgroundColor: "#0056b3", color: "white" }}
-              />
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={discountTypes}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) =>
-                        `${name} ${(percent * 100).toFixed(0)}%`
-                      }
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {discountTypes.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-        {/* Gráfico de Descuentos por Departamento */}
+        {/* Tabla de Descuentos */}
         <Card
-          sx={{
-            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-            borderRadius: "10px",
-            mb: 3,
-          }}
+          sx={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)", borderRadius: "10px" }}
         >
           <CardHeader
-            title="Descuentos por Departamento"
-            sx={{ backgroundColor: "#0056b3", color: "white" }}
-          />
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={departmentDiscounts}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="departamento" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="descuentos"
-                  stroke="#8884d8"
-                  strokeWidth={2}
-                  name="Descuentos ($)"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="socios"
-                  stroke="#82ca9d"
-                  strokeWidth={2}
-                  name="Número de Socios"
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Tabla de Top Socios */}
-        <Card
-          sx={{
-            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-            borderRadius: "10px",
-            mb: 3,
-          }}
-        >
-          <CardHeader
-            title="Top 5 Socios con Mayor Descuento"
+            title={`Descuentos Aplicados - ${
+              months.find((m) => m.value === selectedMonth)?.label
+            } ${selectedYear}`}
             sx={{ backgroundColor: "#0056b3", color: "white" }}
           />
           <CardContent>
@@ -435,43 +462,66 @@ const UserAnnualDiscountReportPage = () => {
                       Departamento
                     </TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>
-                      Total Descuentos
+                      Cuota Fija
                     </TableCell>
-                    <TableCell sx={{ fontWeight: "bold" }}>Préstamos</TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>
-                      Promedio Mensual
+                      Descuento Préstamo
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      Total Descuento
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>Estado</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      Fecha Aplicación
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      Observaciones
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {topMembers.map((member, index) => (
+                  {filteredData.map((member, index) => (
                     <TableRow key={index} hover>
                       <TableCell>
                         <Typography variant="body2" fontWeight="medium">
                           {member.socio}
                         </Typography>
+                        <Typography variant="caption" color="textSecondary">
+                          {member.socioId}
+                        </Typography>
                       </TableCell>
                       <TableCell>{member.departamento}</TableCell>
+                      <TableCell>
+                        <Typography variant="body2" fontWeight="medium">
+                          {member.cuotaFija}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" fontWeight="medium">
+                          {member.descuentoPrestamo}
+                        </Typography>
+                      </TableCell>
                       <TableCell>
                         <Typography
                           variant="body2"
                           fontWeight="bold"
                           color="primary"
                         >
-                          ${member.descuentos.toLocaleString()}
+                          {member.totalDescuento}
                         </Typography>
                       </TableCell>
                       <TableCell>
                         <Chip
-                          label={member.prestamos}
+                          icon={getStatusIcon(member.estado)}
+                          label={member.estado}
+                          color={getStatusColor(member.estado)}
                           size="small"
-                          color="warning"
-                          variant="outlined"
                         />
                       </TableCell>
+                      <TableCell>{member.fechaAplicacion}</TableCell>
                       <TableCell>
-                        <Typography variant="body2">
-                          ${(member.descuentos / 12).toFixed(2)}
+                        <Typography variant="body2" sx={{ maxWidth: 200 }}>
+                          {member.observaciones}
                         </Typography>
                       </TableCell>
                     </TableRow>
@@ -479,12 +529,29 @@ const UserAnnualDiscountReportPage = () => {
                 </TableBody>
               </Table>
             </TableContainer>
+
+            {filteredData.length === 0 && (
+              <Box sx={{ textAlign: "center", py: 4 }}>
+                <Typography variant="h6" color="textSecondary">
+                  No se encontraron registros
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {searchTerm
+                    ? "Intenta con otros términos de búsqueda"
+                    : "No hay descuentos para el período seleccionado"}
+                </Typography>
+              </Box>
+            )}
           </CardContent>
         </Card>
 
         {/* Desglose de Cuota Fija */}
         <Card
-          sx={{ boxShadow: "0 4px 6px rgba(0,0,0,0.1)", borderRadius: "10px" }}
+          sx={{
+            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            borderRadius: "10px",
+            mt: 3,
+          }}
         >
           <CardHeader
             title="Desglose de Cuota Fija Mensual"
@@ -494,7 +561,7 @@ const UserAnnualDiscountReportPage = () => {
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <Typography variant="h6" gutterBottom sx={{ color: "#0056b3" }}>
-                  Componentes de la Cuota Fija
+                  Componentes de la Cuota Fija ($26.80)
                 </Typography>
                 <Stack spacing={2}>
                   <Box
@@ -564,7 +631,7 @@ const UserAnnualDiscountReportPage = () => {
               </Grid>
               <Grid item xs={12} md={6}>
                 <Typography variant="h6" gutterBottom sx={{ color: "#0056b3" }}>
-                  Resumen Anual
+                  Resumen del Mes
                 </Typography>
                 <Stack spacing={2}>
                   <Box
@@ -576,7 +643,23 @@ const UserAnnualDiscountReportPage = () => {
                       borderRadius: 1,
                     }}
                   >
-                    <Typography variant="body2">Cuota fija mensual:</Typography>
+                    <Typography variant="body2">Socios procesados:</Typography>
+                    <Typography variant="body2" fontWeight="bold">
+                      {filteredData.length}
+                    </Typography>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      p: 1,
+                      backgroundColor: "#f5f5f5",
+                      borderRadius: 1,
+                    }}
+                  >
+                    <Typography variant="body2">
+                      Cuota fija por socio:
+                    </Typography>
                     <Typography variant="body2" fontWeight="bold">
                       $26.80
                     </Typography>
@@ -590,23 +673,9 @@ const UserAnnualDiscountReportPage = () => {
                       borderRadius: 1,
                     }}
                   >
-                    <Typography variant="body2">Socios activos:</Typography>
+                    <Typography variant="body2">Total cuotas fijas:</Typography>
                     <Typography variant="body2" fontWeight="bold">
-                      69
-                    </Typography>
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      p: 1,
-                      backgroundColor: "#f5f5f5",
-                      borderRadius: 1,
-                    }}
-                  >
-                    <Typography variant="body2">Meses:</Typography>
-                    <Typography variant="body2" fontWeight="bold">
-                      12
+                      ${totalCuotaFija.toFixed(2)}
                     </Typography>
                   </Box>
                   <Divider />
@@ -620,14 +689,14 @@ const UserAnnualDiscountReportPage = () => {
                     }}
                   >
                     <Typography variant="body2" fontWeight="bold">
-                      Total anual:
+                      Total general:
                     </Typography>
                     <Typography
                       variant="body2"
                       fontWeight="bold"
                       color="success.main"
                     >
-                      $22,190.40
+                      ${totalDescuento.toFixed(2)}
                     </Typography>
                   </Box>
                 </Stack>
@@ -640,4 +709,4 @@ const UserAnnualDiscountReportPage = () => {
   );
 };
 
-export default UserAnnualDiscountReportPage;
+export default MonthlyDiscountReportPage;
