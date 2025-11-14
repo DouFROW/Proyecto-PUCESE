@@ -36,6 +36,7 @@ const LoanModal = ({ open, onClose }) => {
     purpose: "",
     termsAccepted: false,
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -45,15 +46,66 @@ const LoanModal = ({ open, onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  // 🟩 ENVÍA SOLICITUD REAL AL BACKEND
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate submission
-    alert("Solicitud enviada!");
-    onClose();
+
+    if (!formData.amount || !formData.purpose) {
+      alert("Debes completar todos los campos.");
+      return;
+    }
+
+    if (!formData.termsAccepted) {
+      alert("Debes aceptar los términos y condiciones.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // ⚠️ IMPORTANTE: Cambia este ID cuando tengas login
+      const socio_id = 2;
+
+      console.log("ENVIANDO:", {
+        socio_id,
+        monto: parseFloat(formData.amount),
+        plazo: parseInt(formData.term),
+        motivo: formData.purpose,
+      });
+
+      const response = await fetch("http://localhost:3000/prestamos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          socio_id,
+          monto: parseFloat(formData.amount),
+          plazo: parseInt(formData.term),
+          motivo: formData.purpose,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("❌ Backend error:", data);
+        alert(
+          "Error al registrar el préstamo: " + (data.details || data.error)
+        );
+        return;
+      }
+
+      alert("✅ Solicitud registrada correctamente");
+      onClose();
+    } catch (err) {
+      console.error("❌ Error:", err);
+      alert("No se pudo conectar con el servidor.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const estimatedMonthly = 350.5; // Static for demo
-  const totalPay = 5850.0; // Static for demo
+  const estimatedMonthly = 350.5;
+  const totalPay = 5850.0;
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -71,14 +123,10 @@ const LoanModal = ({ open, onClose }) => {
             <Close />
           </Button>
         </Box>
+
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3} sx={{ mb: 3 }}>
-            <Grid
-              size={{
-                xs: 12,
-                md: 6,
-              }}
-            >
+            <Grid xs={12} md={6}>
               <TextField
                 fullWidth
                 label="Monto Solicitado"
@@ -92,12 +140,8 @@ const LoanModal = ({ open, onClose }) => {
                 }}
               />
             </Grid>
-            <Grid
-              size={{
-                xs: 12,
-                md: 6,
-              }}
-            >
+
+            <Grid xs={12} md={6}>
               <FormControl fullWidth>
                 <InputLabel>Plazo de Pago</InputLabel>
                 <Select
@@ -115,6 +159,7 @@ const LoanModal = ({ open, onClose }) => {
               </FormControl>
             </Grid>
           </Grid>
+
           <TextField
             fullWidth
             multiline
@@ -125,13 +170,9 @@ const LoanModal = ({ open, onClose }) => {
             onChange={handleChange}
             sx={{ mb: 3 }}
           />
+
           <Grid container spacing={3}>
-            <Grid
-              size={{
-                xs: 12,
-                md: 6,
-              }}
-            >
+            <Grid xs={12} md={6}>
               <Card sx={{ p: 2 }}>
                 <Typography variant="h6" gutterBottom>
                   Resumen de Pago
@@ -147,12 +188,8 @@ const LoanModal = ({ open, onClose }) => {
                 </Typography>
               </Card>
             </Grid>
-            <Grid
-              size={{
-                xs: 12,
-                md: 6,
-              }}
-            >
+
+            <Grid xs={12} md={6}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -163,14 +200,15 @@ const LoanModal = ({ open, onClose }) => {
                 }
                 label="Acepto los términos y condiciones"
               />
+
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 fullWidth
-                disabled={!formData.termsAccepted}
+                disabled={!formData.termsAccepted || loading}
               >
-                Enviar Solicitud
+                {loading ? "Enviando..." : "Enviar Solicitud"}
               </Button>
             </Grid>
           </Grid>

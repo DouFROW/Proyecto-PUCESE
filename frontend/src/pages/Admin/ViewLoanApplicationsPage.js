@@ -59,7 +59,7 @@ const ViewLoanApplicationsPage = ({ autoOpenSocio }) => {
             "es-ES"
           ),
           estado: p.estado,
-          motivo: p.motivo,
+          motivo: p.motivo ?? "—",
         }));
 
         setLoanApplications(formatted);

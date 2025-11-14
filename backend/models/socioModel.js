@@ -7,14 +7,13 @@ const SocioModel = {
     return new Promise((resolve, reject) => {
       const sql = `
         INSERT INTO socios
-        (codigo_socio, nombre, apellido, cedula, direccion, departamento,
+        (nombre, apellido, cedula, direccion, departamento,
          fecha_ingreso, nombre_banco, numero_cuenta, tipo_cuenta, email, telefono, estado, salario)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Activo', 0)
       `;
       db.query(
         sql,
         [
-          socioData.codigo_socio,
           socioData.nombre,
           socioData.apellido,
           socioData.cedula,
@@ -103,25 +102,6 @@ const SocioModel = {
           reject(err);
         } else {
           resolve(result[0].total);
-        }
-      });
-    });
-  },
-
-  // Actualizar socio
-  actualizar: (id, datos) => {
-    return new Promise((resolve, reject) => {
-      const campos = Object.keys(datos)
-        .map((key) => `${key} = ?`)
-        .join(", ");
-      const valores = [...Object.values(datos), id];
-
-      const sql = `UPDATE socios SET ${campos} WHERE id_socio = ?`;
-      db.query(sql, valores, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
         }
       });
     });
